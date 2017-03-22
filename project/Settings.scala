@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols }
+import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
 
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
@@ -33,8 +33,6 @@ object Settings {
     name := "prometheus-client-scala",
     organization := "com.full360",
     version := "0.1",
-    resolvers := Resolvers(),
-    libraryDependencies ++= Dependencies(),
     scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-deprecation",
@@ -55,9 +53,12 @@ object Settings {
       "-Ywarn-numeric-widen",
       "-Ywarn-unused-import"
     ),
-    assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
-    assemblyJarName in assembly := s"${name.value}-${version.value}",
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " }
+  )
+
+  private lazy val assemble = Seq(
+    assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
+    assemblyJarName in assembly := s"${name.value}-${version.value}"
   )
 
   private lazy val format = {
@@ -67,6 +68,7 @@ object Settings {
       .setPreference(AlignParameters, true)
       .setPreference(AlignSingleLineCaseStatements, true)
       .setPreference(DoubleIndentClassDeclaration, true)
+      .setPreference(SpacesAroundMultiImports, true)
 
     SbtScalariform.scalariformSettings ++ Seq(
       ScalariformKeys.preferences in Compile := preferences,
@@ -74,5 +76,5 @@ object Settings {
     )
   }
 
-  def apply() = base ++ format
+  def apply() = base ++ assemble ++ format
 }
