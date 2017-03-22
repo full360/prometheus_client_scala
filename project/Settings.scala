@@ -29,7 +29,7 @@ import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseS
 object Settings {
 
   private lazy val base = Seq(
-    name := "prometheus_client_scala",
+    name := "prometheus-client-scala",
     organization := "com.full360",
     version := "0.1",
     resolvers := Resolvers(),
