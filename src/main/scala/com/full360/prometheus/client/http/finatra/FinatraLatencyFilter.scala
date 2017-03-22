@@ -33,8 +33,8 @@ class FinatraLatencyFilter extends SimpleFilter[Request, Response] with HttpLate
     val stopwatch = Stopwatch.start()
 
     service(request)
-      .onSuccess(response => register(stopwatch, request, Some(response)))
-      .onFailure(_ => register(stopwatch, request, None))
+      .onSuccess(response ⇒ register(stopwatch, request, Some(response)))
+      .onFailure(_ ⇒ register(stopwatch, request, None))
   }
 
   def register(stopwatch: Stopwatch.Elapsed, request: Request, response: Option[Response] = None) = super.register(

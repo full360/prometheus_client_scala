@@ -55,7 +55,8 @@ object Settings {
       "-Ywarn-numeric-widen",
       "-Ywarn-unused-import"
     ),
-    assemblyJarName in assembly := "prometheus-client-scala.jar",
+    assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
+    assemblyJarName in assembly := s"${name.value}-${version.value}",
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " }
   )
 
