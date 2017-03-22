@@ -19,12 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.client.metric.telemetry
 
-object Resolvers {
+import com.full360.prometheus.client.metric.Metric
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
-  )
+import scala.collection.concurrent.TrieMap
+
+import io.prometheus.client.Summary
+
+trait Latency extends Metric {
+
+  def register(duration: Double, labels: String*) = {
+    if (this.labels.length != labels.length) {
+      throw new RuntimeException("Wrong number of labels to register")
+    } else {
+      getMetric
+        .labels(labels: _*)
+        .observe(duration)
+    }
+  }
+
+  def getMetric = Latency.latencies
+    .getOrElseUpdate(cacheKey, Summary.build()
+      .namespace(namespace)
+      .name(name)
+      .help(help)
+      .labelNames(labels: _*)
+      .quantile(0.50, 0.05)
+      .quantile(0.90, 0.01)
+      .quantile(0.99, 0.01)
+      .register(registry))
+}
+
+object Latency {
+
+  val latencies = TrieMap.empty[String, Summary]
 }

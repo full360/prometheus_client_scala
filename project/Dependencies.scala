@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Full 360 Inc
+ * Copyright © 2017 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -29,6 +29,7 @@ object Dependencies {
     "io.prometheus"  % "simpleclient_hotspot"     % "0.0.21" % "compile",
     "io.prometheus"  % "simpleclient_servlet"     % "0.0.21" % "compile",
     "io.prometheus"  % "simpleclient_pushgateway" % "0.0.21" % "compile",
+    "com.twitter"   %% "finatra-http"             % "2.2.0"  % "provided",
     "org.scalatest" %% "scalatest"                % "3.0.1"  % "test",
     "org.mockito"    % "mockito-core"             % "2.7.19" % "test"
   )

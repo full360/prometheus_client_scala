@@ -19,12 +19,24 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.client.util
 
-object Resolvers {
+import java.io.StringWriter
+import java.util
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
-  )
+import io.prometheus.client.Collector
+import io.prometheus.client.exporter.common.TextFormat
+
+object Implicits {
+
+  implicit class MetricFamilySamplesWriter(collector: util.Enumeration[Collector.MetricFamilySamples]) {
+
+    def asString = write().toString
+
+    def write(writer: StringWriter = new StringWriter) = {
+      TextFormat.write004(writer, collector)
+      writer
+    }
+  }
+
 }

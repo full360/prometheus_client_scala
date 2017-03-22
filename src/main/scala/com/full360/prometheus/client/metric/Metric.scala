@@ -19,12 +19,29 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.client.metric
 
-object Resolvers {
+import com.full360.prometheus.client.util.Implicits._
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
-  )
+import io.prometheus.client.CollectorRegistry
+
+trait Metric {
+
+  val namespace: String
+  val name: String
+  val help: String
+  val labels: Seq[String]
+
+  def registry = Metric.registry
+
+  def cacheKey = "%s_%s".format(namespace, name)
+}
+
+object Metric {
+
+  val registry = new CollectorRegistry(true)
+
+  override def toString = registry
+    .metricFamilySamples()
+    .asString
 }

@@ -19,12 +19,29 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.client.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.client.http.HttpLatency
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
+import com.twitter.util.{ Future, Stopwatch }
+
+class FinatraLatencyFilter extends SimpleFilter[Request, Response] with HttpLatency {
+
+  override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
+    val stopwatch = Stopwatch.start()
+
+    service(request)
+      .onSuccess(response => register(stopwatch, request, Some(response)))
+      .onFailure(_ => register(stopwatch, request, None))
+  }
+
+  def register(stopwatch: Stopwatch.Elapsed, request: Request, response: Option[Response] = None) = super.register(
+    stopwatch().inMilliseconds / 1000.0,
+    request.method.toString().toLowerCase,
+    request.host.getOrElse("unknown"),
+    request.uri,
+    response.map(_.getStatusCode()).getOrElse(500)
   )
 }

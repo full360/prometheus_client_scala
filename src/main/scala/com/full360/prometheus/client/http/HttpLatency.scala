@@ -19,12 +19,23 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.client.http
 
-object Resolvers {
+import com.full360.prometheus.client.metric.namespace.Http
+import com.full360.prometheus.client.metric.telemetry.Latency
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
+trait HttpLatency extends Http with Latency {
+
+  override val name = "request_duration_seconds"
+  override val help = "A Summary for response latency"
+  override val labels = Seq(
+    "method",
+    "host",
+    "uri",
+    "response"
   )
+
+  def register(duration: Double, method: String, host: String, uri: String, response: Int) = {
+    super.register(duration, method, host, uri, response.toString)
+  }
 }

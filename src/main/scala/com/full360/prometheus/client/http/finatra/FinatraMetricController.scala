@@ -19,12 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.client.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.client.metric.Metric
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
-  )
+import com.twitter.finagle.http.Request
+import com.twitter.finatra.http.Controller
+
+class FinatraMetricController extends Controller {
+
+  get("metrics") { _: Request ⇒ Metric.toString }
 }

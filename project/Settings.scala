@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Full 360 Inc
+ * Copyright © 2017 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -19,12 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols }
+
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import sbt.Keys._
 import sbt._
-
-import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols }
+import sbtassembly.AssemblyKeys._
 
 object Settings {
 
@@ -33,8 +34,8 @@ object Settings {
     organization := "com.full360",
     version := "0.1",
     resolvers := Resolvers(),
-    libraryDependencies := Dependencies(),
-    scalaVersion := "2.12.1",
+    libraryDependencies ++= Dependencies(),
+    scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-deprecation",
       "-encoding", "UTF-8",
@@ -54,6 +55,7 @@ object Settings {
       "-Ywarn-numeric-widen",
       "-Ywarn-unused-import"
     ),
+    assemblyJarName in assembly := "prometheus-client-scala.jar",
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " }
   )
 
