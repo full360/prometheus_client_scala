@@ -59,7 +59,7 @@ object Publish {
   def apply() = Seq(
     credentials += credentials_,
     pomExtra := pomExtra_,
-    pgpPassphrase := Some(sys.props("signing.passphrase")).map(_.toArray), //TODO handle NullPointerException
-    usePgpKeyHex("B9AC7C01EBB99E08") //TODO change to env prop
+    pgpPassphrase := Option(sys.props("signing.passphrase")).map(_.toArray),
+    usePgpKeyHex(sys.props("signing.keyid"))
   )
 }
