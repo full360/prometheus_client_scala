@@ -19,12 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import sbt.Keys._
 import sbt._
 
 object Resolvers {
 
-  def apply() = Seq(
+  def apply() = Seq(resolvers := Seq(
     "jcenter" at "http://jcenter.bintray.com",
     "twitter maven" at "http://maven.twttr.com"
-  )
+  ))
 }

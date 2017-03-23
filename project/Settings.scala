@@ -32,7 +32,7 @@ object Settings {
   private lazy val base = Seq(
     name := "prometheus-client-scala",
     organization := "com.full360",
-    version := "0.1",
+    version := "0.1-SNAPSHOT",
     scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-deprecation",
@@ -58,7 +58,7 @@ object Settings {
 
   private lazy val assemble = Seq(
     assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
-    assemblyJarName in assembly := s"${name.value}-${version.value}"
+    assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
   )
 
   private lazy val format = {

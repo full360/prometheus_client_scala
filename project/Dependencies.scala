@@ -19,19 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import sbt.Keys._
 import sbt._
 
 object Dependencies {
 
   // @formatter:off
-  def apply() = Seq(
-    "io.prometheus"  % "simpleclient"             % "0.0.21" % "compile",
-    "io.prometheus"  % "simpleclient_hotspot"     % "0.0.21" % "compile",
-    "io.prometheus"  % "simpleclient_servlet"     % "0.0.21" % "compile",
-    "io.prometheus"  % "simpleclient_pushgateway" % "0.0.21" % "compile",
-    "com.twitter"   %% "finatra-http"             % "2.2.0"  % "provided",
-    "org.scalatest" %% "scalatest"                % "3.0.1"  % "test",
-    "org.mockito"    % "mockito-core"             % "2.7.19" % "test"
-  )
+  def apply() = Seq(libraryDependencies ++= Seq(
+      "io.prometheus"  % "simpleclient"             % "0.0.21" % "compile",
+      "io.prometheus"  % "simpleclient_hotspot"     % "0.0.21" % "compile",
+      "io.prometheus"  % "simpleclient_servlet"     % "0.0.21" % "compile",
+      "io.prometheus"  % "simpleclient_pushgateway" % "0.0.21" % "compile",
+      "com.twitter"   %% "finatra-http"             % "2.2.0"  % "provided",
+      "org.scalatest" %% "scalatest"                % "3.0.1"  % "test",
+      "org.mockito"    % "mockito-core"             % "2.7.19" % "test"
+  ))
   // @formatter:on
 }
