@@ -19,24 +19,18 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.typesafe.sbt.SbtPgp.autoImportImpl.usePgpKeyHex
+import com.typesafe.sbt.SbtPgp.autoImportImpl._
 import sbt.Credentials
 import sbt.Keys._
 
 object Publish {
 
-  private lazy val credentials_ = {
-
-    println(sys.props("sonatype.username"))
-    println(sys.props("sonatype.password"))
-
-    Credentials(
+  private lazy val credentials_ = Credentials(
       "Sonatype Nexus Repository Manager",
       "oss.sonatype.org",
       sys.props("sonatype.username"),
       sys.props("sonatype.password")
     )
-  }
 
   private lazy val pomExtra_ = {
     <url>https://github.com/full360/prometheus_client_scala</url>
@@ -65,6 +59,7 @@ object Publish {
   def apply() = Seq(
     credentials += credentials_,
     pomExtra := pomExtra_,
-    usePgpKeyHex("B9AC7C01EBB99E08")
+    pgpPassphrase := Some(sys.props("signing.passphrase")).map(_.toArray), //TODO handle NullPointerException
+    usePgpKeyHex("B9AC7C01EBB99E08") //TODO change to env prop
   )
 }

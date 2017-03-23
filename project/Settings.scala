@@ -32,7 +32,7 @@ object Settings {
   private lazy val base = Seq(
     name := "prometheus-client-scala",
     organization := "com.full360",
-    version := "0.1-SNAPSHOT",
+    version := "0.3-SNAPSHOT",
     scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-deprecation",
