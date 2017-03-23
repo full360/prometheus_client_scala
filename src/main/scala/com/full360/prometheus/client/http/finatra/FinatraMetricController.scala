@@ -28,5 +28,5 @@ import com.twitter.finatra.http.Controller
 
 class FinatraMetricController extends Controller {
 
-  get("metrics") { _: Request ⇒ Metric.toString }
+  get("/metrics") { _: Request ⇒ Metric.toString }
 }
