@@ -19,9 +19,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.typesafe.sbt.SbtPgp.autoImportImpl.{ pgpPassphrase, usePgpKeyHex }
-import sbt.Credentials
+import com.typesafe.sbt.SbtPgp.autoImportImpl._
 import sbt.Keys._
+import sbt.{ Credentials, _ }
 
 object Publish {
 
@@ -30,11 +30,6 @@ object Publish {
     "oss.sonatype.org",
     sys.env.getOrElse("SONATYPE_USERNAME", ""),
     sys.env.getOrElse("SONATYPE_PASSWORD", "")
-  )
-
-  private lazy val sign = Seq(
-    usePgpKeyHex(sys.env.getOrElse("SONATYPE_KEY_ID", "")),
-    pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
   )
 
   private lazy val pom = {
@@ -61,5 +56,19 @@ object Publish {
       </developers>
   }
 
-  def apply() = sign ++ Seq(publishMavenStyle := true, credentials += credential, pomExtra := pom)
+  def apply() = {
+
+    println(sys.env.get("SONATYPE_USERNAME"))
+    println(sys.env.get("SONATYPE_PASSWORD"))
+    println(sys.env.get("SONATYPE_KEY_PASSPHRASE"))
+
+    Seq(
+      publishMavenStyle := true,
+      credentials += credential,
+      pomExtra := pom,
+      pgpSecretRing := file(".secring.gpg"),
+      pgpPublicRing := file(".pubring.gpg"),
+      pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
+    )
+  }
 }
