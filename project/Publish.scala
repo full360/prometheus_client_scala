@@ -61,11 +61,5 @@ object Publish {
       </developers>
   }
 
-  def apply() = {
-    println(sys.env.getOrElse("SONATYPE_USERNAME", ""))
-    println(sys.env.getOrElse("SONATYPE_PASSWORD", ""))
-    println(sys.env.getOrElse("SONATYPE_KEY_ID", ""))
-    println(sys.env.getOrElse("SONATYPE_KEY_PASSPHRASE", ""))
-    sign ++ Seq(publishMavenStyle := true, credentials += credential, pomExtra := pom)
-  }
+  def apply() = sign ++ Seq(publishMavenStyle := true, credentials += credential, pomExtra := pom)
 }

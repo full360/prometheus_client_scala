@@ -1,4 +1,4 @@
-# Prometheus Client Scala [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](https://opensource.org/licenses/MIT)
+# Prometheus Client Scala [![Build Status](https://travis-ci.org/full360/prometheus_client_scala.svg?branch=master)](https://travis-ci.org/full360/prometheus_client_scala) [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](https://opensource.org/licenses/MIT)
 Prometheus instrumentation library for Scala applications
 
 ## License
