@@ -19,8 +19,11 @@ before_install:
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .secring.gpg.enc -out .secring.gpg -d
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .pubring.gpg.enc -out .pubring.gpg -d
 
-after_success:
-  - '[ "${$TRAVIS_BRANCH}" = "master" ] || [ "$TRAVIS_BRANCH" == "dev" ] && sbt publishSigned'
+deploy:
+  provider: script
+  script: sbt publishSigned
+  on:
+    branch: master
 
 jdk:
    - oraclejdk8
