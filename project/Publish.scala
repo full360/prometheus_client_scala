@@ -56,19 +56,12 @@ object Publish {
       </developers>
   }
 
-  def apply() = {
-
-    println(sys.env.get("SONATYPE_USERNAME"))
-    println(sys.env.get("SONATYPE_PASSWORD"))
-    println(sys.env.get("SONATYPE_KEY_PASSPHRASE"))
-
-    Seq(
-      publishMavenStyle := true,
-      credentials += credential,
-      pomExtra := pom,
-      pgpSecretRing := file(".secring.gpg"),
-      pgpPublicRing := file(".pubring.gpg"),
-      pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
-    )
-  }
+  def apply() = Seq(
+    publishMavenStyle := true,
+    credentials += credential,
+    pomExtra := pom,
+    pgpSecretRing := file(".secring.gpg"),
+    pgpPublicRing := file(".pubring.gpg"),
+    pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
+  )
 }
