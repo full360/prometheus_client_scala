@@ -19,6 +19,9 @@ before_install:
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .secring.gpg.enc -out .secring.gpg -d
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .pubring.gpg.enc -out .pubring.gpg -d
 
+after_success:
+  - sbt publishSigned
+
 jdk:
    - oraclejdk8
 
