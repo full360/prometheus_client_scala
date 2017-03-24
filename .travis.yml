@@ -1,0 +1,28 @@
+language: scala
+
+scala:
+   - 2.11.8
+
+cache:
+  directories:
+    - $HOME/.m2/repository
+    - $HOME/.sbt
+    - $HOME/.ivy2
+
+script:
+  - sbt compile test
+
+  # Trick to avoid unnecessary cache updates
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+
+jdk:
+   - oraclejdk8
+
+notifications:
+  email:
+    - pedro.diaz@full360.com
+
+env:
+  # SONATYPE_USERNAME
+  global:
+  - secure: WFKrglyGg9dRMY0zSJ/AuTg/hIc6IVqsr9RMzRYNZBvVCYJ3niUMdfYAMPAa9PJZ7r9kbe6DSY8pPNDmblzhiiQA6vucu1GLhahCShfthF5AL0SLJkMOOEotoNuLB45mVIFAh421oEkQ/4dl49JpsNosqWkxiFjyuJKyNk48Ejfdvxhsb490/VUCz4vg4zKe1fMFXyDTghe2Tj+Bvy0yKG87k1j67foyDx0A7ahubSUx/kPnXAxYpmNkAoTcq8CxhG5M6/y7fQOHrlAQE/oV0cqgA4xCMIFsADRTMxl4Cf0e4p7LFNAxwmuVSlPqtjrGggL29ugz5owSImdRKxrWy8cwDdkQ5mOIF6iHkJbp6x3R49BXBBSWPPi90pIMN5/B3apLMK5tVPvc2bOfA7j4W86VrG95d7A5MG0TIWH/tmoEBLMrRUNB9oboN90bvemXxMExY1syGbJCfqXZlaKkvu+It2we48UJkdynALNTytM9nQS5sOPIDc7iTP25DIi1C9KVCQC5/3tokj8pJq6uN0dQSZnbBT9DjZeHnFYddDkm8A0NtvPyHf0BMtvrHLVgyaTMsiFQeXJswMIduSycs2S6u3dsCFTFACtLVG8vKJc4r+RC+FgQIGMEhe6lhF2Q+UiCCu+cWIMLJGeTK/INeu7jNcMK39NyJQ3ItHap1gg=

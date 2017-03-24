@@ -19,20 +19,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.typesafe.sbt.SbtPgp.autoImportImpl._
+import com.typesafe.sbt.SbtPgp.autoImportImpl.{ pgpPassphrase, usePgpKeyHex }
 import sbt.Credentials
 import sbt.Keys._
 
 object Publish {
 
-  private lazy val credentials_ = Credentials(
-      "Sonatype Nexus Repository Manager",
-      "oss.sonatype.org",
-      sys.props("sonatype.username"),
-      sys.props("sonatype.password")
-    )
+  private lazy val credential = Credentials(
+    "Sonatype Nexus Repository Manager",
+    "oss.sonatype.org",
+    sys.env.getOrElse("SONATYPE_USERNAME", ""),
+    sys.env.getOrElse("SONATYPE_PASSWORD", "")
+  )
 
-  private lazy val pomExtra_ = {
+  private lazy val sign = Seq(
+    usePgpKeyHex(sys.env.getOrElse("SONATYPE_KEY_ID", "")),
+    pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
+  )
+
+  private lazy val pom = {
     <url>https://github.com/full360/prometheus_client_scala</url>
       <licenses>
         <license>
@@ -56,10 +61,11 @@ object Publish {
       </developers>
   }
 
-  def apply() = Seq(
-    credentials += credentials_,
-    pomExtra := pomExtra_,
-    pgpPassphrase := Option(sys.props("signing.passphrase")).map(_.toArray),
-    usePgpKeyHex(sys.props("signing.keyid"))
-  )
+  def apply() = {
+    println(sys.env.getOrElse("SONATYPE_USERNAME", ""))
+    println(sys.env.getOrElse("SONATYPE_PASSWORD", ""))
+    println(sys.env.getOrElse("SONATYPE_KEY_ID", ""))
+    println(sys.env.getOrElse("SONATYPE_KEY_PASSPHRASE", ""))
+    sign ++ Seq(publishMavenStyle := true, credentials += credential, pomExtra := pom)
+  }
 }

@@ -33,6 +33,8 @@ object Settings {
     name := "prometheus-client-scala",
     organization := "com.full360",
     version := "0.3-SNAPSHOT",
+    licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
+    homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
     scalaVersion := "2.11.8",
     scalacOptions := Seq(
       "-deprecation",
