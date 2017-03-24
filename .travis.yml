@@ -15,7 +15,7 @@ script:
   # Trick to avoid unnecessary cache updates
   - find $HOME/.sbt -name "*.lock" | xargs rm
 
-before_install:
+before_deploy:
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .secring.gpg.enc -out .secring.gpg -d
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .pubring.gpg.enc -out .pubring.gpg -d
 
@@ -23,7 +23,9 @@ deploy:
   provider: script
   script: sbt publishSigned
   on:
-    branch: master
+    branch:
+      - master
+      - dev
 
 jdk:
    - oraclejdk8
