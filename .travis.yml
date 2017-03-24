@@ -21,7 +21,6 @@ before_install:
 
 after_success:
   - '[ "${TRAVIS_BRANCH}" = "master" ] && sbt publishSigned || true'
-  - '[ "${TRAVIS_BRANCH}" = "dev" ] && sbt publishSigned || true'
 
 jdk:
    - oraclejdk8
