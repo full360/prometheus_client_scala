@@ -31,8 +31,8 @@ trait HttpLatency extends Http with Latency {
   override val labels = Seq(
     "method",
     "host",
-    "uri",
-    "response"
+    "path",
+    "code"
   )
 
   def register(duration: Double, method: String, host: String, uri: String, response: Int) = {
