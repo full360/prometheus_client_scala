@@ -40,7 +40,7 @@ object AkkaHttpLatencyDirective extends HttpLatency {
   def register(timer: Timer, request: HttpRequest, response: HttpResponse) = super.register(
     timer.stop,
     request.method.value.toLowerCase,
-    request.uri.authority.toString(),
+    "%s:%s".format(request.uri.authority.host.address(), request.uri.authority.port.toString),
     request.uri.path.toString(),
     response.status.intValue()
   )
