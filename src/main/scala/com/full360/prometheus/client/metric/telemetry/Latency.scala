@@ -29,13 +29,13 @@ import io.prometheus.client.Summary
 
 trait Latency extends Metric {
 
-  def register(duration: Double, labels: String*) = {
+  def register(duration: Long, labels: String*) = {
     if (this.labels.length != labels.length) {
       throw new RuntimeException("Wrong number of labels to register")
     } else {
       getMetric
         .labels(labels: _*)
-        .observe(duration)
+        .observe(duration.toDouble)
     }
   }
 

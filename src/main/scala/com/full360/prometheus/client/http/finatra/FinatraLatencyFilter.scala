@@ -22,23 +22,24 @@
 package com.full360.prometheus.client.http.finatra
 
 import com.full360.prometheus.client.http.HttpLatency
+import com.full360.prometheus.client.util.Timer
 
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
-import com.twitter.util.{ Future, Stopwatch }
+import com.twitter.util.Future
 
 class FinatraLatencyFilter extends SimpleFilter[Request, Response] with HttpLatency {
 
   override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
-    val stopwatch = Stopwatch.start()
+    val timer = new Timer
 
     service(request)
-      .onSuccess(response ⇒ register(stopwatch, request, Some(response)))
-      .onFailure(_ ⇒ register(stopwatch, request, None))
+      .onSuccess(response ⇒ register(timer, request, Some(response)))
+      .onFailure(_ ⇒ register(timer, request, None))
   }
 
-  def register(stopwatch: Stopwatch.Elapsed, request: Request, response: Option[Response] = None) = super.register(
-    stopwatch().inMilliseconds / 1000.0,
+  def register(timer: Timer, request: Request, response: Option[Response] = None) = super.register(
+    timer.stop,
     request.method.toString().toLowerCase,
     request.host.getOrElse("unknown"),
     request.uri,

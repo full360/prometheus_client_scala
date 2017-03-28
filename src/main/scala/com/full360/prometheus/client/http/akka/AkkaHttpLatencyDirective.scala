@@ -19,21 +19,29 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.client.http.akka
 
-object Dependencies {
+import com.full360.prometheus.client.http.HttpLatency
+import com.full360.prometheus.client.util.Timer
 
-  // @formatter:off
-  def apply() = Seq(libraryDependencies ++= Seq(
-      "io.prometheus"      % "simpleclient"             % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_hotspot"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_servlet"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_pushgateway" % "0.0.21" % "compile",
-      "com.twitter"       %% "finatra-http"             % "2.2.0"  % "provided",
-      "com.typesafe.akka" %% "akka-http"                % "10.0.5" % "provided",
-      "org.scalatest"     %% "scalatest"                % "3.0.1"  % "test",
-      "org.mockito"        % "mockito-core"             % "2.7.19" % "test"
-  ))
-  // @formatter:on
+import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
+import akka.http.scaladsl.server.Directives._
+
+object AkkaHttpLatencyDirective extends HttpLatency {
+
+  val latencyDirective = extractRequestContext.flatMap { context ⇒
+    val timer = new Timer
+    mapResponse { response ⇒
+      register(timer, context.request, response)
+      response
+    }
+  }
+
+  def register(timer: Timer, request: HttpRequest, response: HttpResponse) = super.register(
+    timer.stop,
+    request.method.value.toLowerCase,
+    request.uri.authority.toString(),
+    request.uri.path.toString(),
+    response.status.intValue()
+  )
 }

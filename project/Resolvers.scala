@@ -26,6 +26,8 @@ object Resolvers {
 
   def apply() = Seq(resolvers := Seq(
     "jcenter" at "http://jcenter.bintray.com",
-    "twitter maven" at "http://maven.twttr.com"
+    "confluent" at "http://packages.confluent.io/maven/",
+    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+    "Twitter maven" at "http://maven.twttr.com"
   ))
 }
