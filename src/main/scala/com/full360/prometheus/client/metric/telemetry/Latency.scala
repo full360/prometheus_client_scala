@@ -23,35 +23,27 @@ package com.full360.prometheus.client.metric.telemetry
 
 import com.full360.prometheus.client.metric.Metric
 
-import scala.collection.concurrent.TrieMap
-
 import io.prometheus.client.Summary
 
 trait Latency extends Metric {
+
+  private lazy val metric = Summary.build()
+    .namespace(namespace)
+    .name(name)
+    .help(help)
+    .labelNames(labels: _*)
+    .quantile(0.50, 0.05)
+    .quantile(0.90, 0.01)
+    .quantile(0.99, 0.01)
+    .register(registry)
 
   def register(duration: Long, labels: String*) = {
     if (this.labels.length != labels.length) {
       throw new RuntimeException("Wrong number of labels to register")
     } else {
-      getMetric
+      metric
         .labels(labels: _*)
         .observe(duration.toDouble)
     }
   }
-
-  def getMetric = Latency.latencies
-    .getOrElseUpdate(cacheKey, Summary.build()
-      .namespace(namespace)
-      .name(name)
-      .help(help)
-      .labelNames(labels: _*)
-      .quantile(0.50, 0.05)
-      .quantile(0.90, 0.01)
-      .quantile(0.99, 0.01)
-      .register(registry))
-}
-
-object Latency {
-
-  val latencies = TrieMap.empty[String, Summary]
 }
