@@ -21,11 +21,13 @@
 
 package com.full360.prometheus.client.util
 
+import java.util.concurrent.TimeUnit
+
 class Timer {
 
   private final val startTime = System.currentTimeMillis()
 
   def stop = {
-    System.currentTimeMillis() - startTime
+    TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTime)
   }
 }
