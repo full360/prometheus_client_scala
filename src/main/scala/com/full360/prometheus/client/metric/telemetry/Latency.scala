@@ -37,7 +37,7 @@ trait Latency extends Metric {
     .quantile(0.99, 0.01)
     .register(registry)
 
-  def register(duration: Long, labels: String*) = {
+  def register(duration: Double, labels: String*) = {
     if (this.labels.length != labels.length) {
       throw new RuntimeException("Wrong number of labels to register")
     } else {

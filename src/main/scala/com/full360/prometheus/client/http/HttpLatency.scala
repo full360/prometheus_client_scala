@@ -35,7 +35,7 @@ trait HttpLatency extends Http with Latency {
     "code"
   )
 
-  def register(duration: Long, method: String, host: String, uri: String, response: Int) = {
+  def register(duration: Double, method: String, host: String, uri: String, response: Int) = {
     super.register(duration, method, host, uri, response.toString)
   }
 }
