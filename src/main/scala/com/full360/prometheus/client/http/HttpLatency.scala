@@ -26,7 +26,7 @@ import com.full360.prometheus.client.metric.telemetry.Latency
 
 trait HttpLatency extends Http with Latency {
 
-  override val name = "request_duration_seconds"
+  override val name = "request_duration_milliseconds"
   override val help = "A Summary for response latency"
   override val labels = Seq(
     "method",
@@ -35,7 +35,7 @@ trait HttpLatency extends Http with Latency {
     "code"
   )
 
-  def register(duration: Double, method: String, host: String, uri: String, response: Int) = {
+  def register(duration: Long, method: String, host: String, uri: String, response: Int) = {
     super.register(duration, method, host, uri, response.toString)
   }
 }

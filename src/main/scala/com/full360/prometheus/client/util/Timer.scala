@@ -26,6 +26,6 @@ class Timer {
   private final val startTime = System.currentTimeMillis()
 
   def stop = {
-    (System.currentTimeMillis() - startTime) / 1000.0
+    System.currentTimeMillis() - startTime
   }
 }
