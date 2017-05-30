@@ -33,13 +33,6 @@ object Publish {
   )
 
   private lazy val pom = {
-    <url>https://github.com/full360/prometheus_client_scala</url>
-      <licenses>
-        <license>
-          <name>MIT License</name>
-          <url>http://www.opensource.org/licenses/mit-license.php</url>
-        </license>
-      </licenses>
       <scm>
         <connection>scm:git:github.com/full360/prometheus_client_scala.git</connection>
         <developerConnection>scm:git:git@github.com:full360/prometheus_client_scala.git</developerConnection>
