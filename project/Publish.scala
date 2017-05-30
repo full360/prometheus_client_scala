@@ -57,13 +57,7 @@ object Publish {
     credentials += credential,
     pomExtra := pom,
 
-    publishTo := {
-      if ((version in ThisBuild).value.endsWith("SNAPSHOT")) {
-        Some("TLT Maven snapshots" at "http://nexus:8081/nexus/content/repositories/snapshots")
-      } else {
-        Some("TLT Maven releases" at "http://nexus:8081/nexus/content/repositories/releases")
-      }
-    },
+    publishTo := Some("TLT Maven releases" at "http://nexus:8081/nexus/content/repositories/releases"),
     updateOptions := updateOptions.value.withCachedResolution(true)
   )
 }
