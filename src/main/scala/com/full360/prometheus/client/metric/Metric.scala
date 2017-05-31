@@ -40,23 +40,24 @@ trait Metric {
 object Metric {
 
   val registry = new CollectorRegistry(true)
-  private var addedJVMMetrics = false
 
   override def toString = registry
     .metricFamilySamples()
     .asString
 
+  /** Expose the clear method used when testing */
+  def clearRegistry() = {
+    registry.clear()
+  }
+
+  /** See io.prometheus.client.hotspot.DefaultExports.initialize() */
   def addJVMMetrics() = {
-    if (!addedJVMMetrics) {
-      // See io.prometheus.client.hotspot.DefaultExports.initialize()
-      new StandardExports().register[Collector](registry)
-      new MemoryPoolsExports().register[Collector](registry)
-      new GarbageCollectorExports().register[Collector](registry)
-      new ThreadExports().register[Collector](registry)
-      new ClassLoadingExports().register[Collector](registry)
-      new VersionInfoExports().register[Collector](registry)
-      addedJVMMetrics = true
-    }
+    new StandardExports().register[Collector](registry)
+    new MemoryPoolsExports().register[Collector](registry)
+    new GarbageCollectorExports().register[Collector](registry)
+    new ThreadExports().register[Collector](registry)
+    new ClassLoadingExports().register[Collector](registry)
+    new VersionInfoExports().register[Collector](registry)
   }
 
 }

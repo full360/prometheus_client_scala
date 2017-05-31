@@ -32,7 +32,7 @@ object Settings {
   private lazy val base = Seq(
     name := "prometheus-client-scala",
     organization := "com.full360",
-    version := "0.3-beta-SNAPSHOT",
+    version := "0.3-beta",
     licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
     scalaVersion := "2.11.8",

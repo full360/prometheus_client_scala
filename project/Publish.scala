@@ -57,7 +57,7 @@ object Publish {
     credentials += credential,
     pomExtra := pom,
 
-    publishTo := Some("TLT Maven releases" at "http://nexus:8081/nexus/content/repositories/snapshots"),
+    publishTo := Some("TLT Maven releases" at "http://nexus:8081/nexus/content/repositories/releases"),
     updateOptions := updateOptions.value.withCachedResolution(true)
   )
 }
