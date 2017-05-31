@@ -19,31 +19,23 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.typesafe.sbt.SbtPgp.autoImportImpl._
-import sbt.Keys._
-import sbt.{ Credentials, _ }
+import sbt.Keys.{publishTo, _}
+import sbt.{Credentials, _}
 
 object Publish {
 
   private lazy val credential = Credentials(
     "Sonatype Nexus Repository Manager",
-    "oss.sonatype.org",
+    sys.env.getOrElse("SONATYPE_REPO", "oss.sonatype.org"),
     sys.env.getOrElse("SONATYPE_USERNAME", ""),
     sys.env.getOrElse("SONATYPE_PASSWORD", "")
   )
 
   private lazy val pom = {
-    <url>https://github.com/full360/prometheus_client_scala</url>
-      <licenses>
-        <license>
-          <name>MIT License</name>
-          <url>http://www.opensource.org/licenses/mit-license.php</url>
-        </license>
-      </licenses>
       <scm>
-        <connection>scm:git:github.com/full360/prometheus_client_scala.git</connection>
-        <developerConnection>scm:git:git@github.com:full360/prometheus_client_scala.git</developerConnection>
-        <url>github.com/full360/prometheus_client_scala.git</url>
+        <connection>scm:git:github.com/TeletronicsDotAe/prometheus_client_scala.git</connection>
+        <developerConnection>scm:git:git@github.com:TeletronicsDotAe/prometheus_client_scala.git</developerConnection>
+        <url>https://github.com/TeletronicsDotAe/prometheus_client_scala</url>
       </scm>
       <developers>
         <developer>
@@ -53,6 +45,10 @@ object Publish {
           <organization>Full 360 Inc</organization>
           <organizationUrl>http://www.full360.com</organizationUrl>
         </developer>
+        <developer>
+          <id>trym-moeller</id>
+          <name>Trym Moeller</name>
+        </developer>
       </developers>
   }
 
@@ -60,8 +56,8 @@ object Publish {
     publishMavenStyle := true,
     credentials += credential,
     pomExtra := pom,
-    pgpSecretRing := file(".secring.gpg"),
-    pgpPublicRing := file(".pubring.gpg"),
-    pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
+
+    publishTo := Some("TLT Maven releases" at "http://nexus:8081/nexus/content/repositories/releases"),
+    updateOptions := updateOptions.value.withCachedResolution(true)
   )
 }

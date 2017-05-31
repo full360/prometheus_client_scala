@@ -22,8 +22,8 @@
 package com.full360.prometheus.client.metric
 
 import com.full360.prometheus.client.util.Implicits._
-
-import io.prometheus.client.CollectorRegistry
+import io.prometheus.client.{ Collector, CollectorRegistry }
+import io.prometheus.client.hotspot._
 
 trait Metric {
 
@@ -44,4 +44,20 @@ object Metric {
   override def toString = registry
     .metricFamilySamples()
     .asString
+
+  /** Expose the clear method used when testing */
+  def clearRegistry() = {
+    registry.clear()
+  }
+
+  /** See io.prometheus.client.hotspot.DefaultExports.initialize() */
+  def addJVMMetrics() = {
+    new StandardExports().register[Collector](registry)
+    new MemoryPoolsExports().register[Collector](registry)
+    new GarbageCollectorExports().register[Collector](registry)
+    new ThreadExports().register[Collector](registry)
+    new ClassLoadingExports().register[Collector](registry)
+    new VersionInfoExports().register[Collector](registry)
+  }
+
 }
