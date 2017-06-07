@@ -22,6 +22,7 @@
 package com.full360.prometheus.annotation
 
 import scala.annotation.{ StaticAnnotation, compileTimeOnly }
+import scala.reflect.api.Trees
 import scala.reflect.macros.blackbox
 
 @compileTimeOnly("Enable macro paradise to expand macro annotations")
@@ -34,6 +35,18 @@ object Counter {
 
   def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
     import c.universe._
+
+    def eval(tree: Trees#Tree) = tree match {
+      case Literal(Constant(value: String)) ⇒ value
+      case _                                ⇒ c.abort(c.enclosingPosition, "Annotation @Benchmark with unexpected annotation type")
+    }
+
+    val name = c.prefix.tree match {
+      case q"new Counter($name)" ⇒ eval(name)
+      case _                     ⇒ c.abort(c.enclosingPosition, "Annotation @Benchmark with unexpected annotation pattern")
+    }
+
+    println(s"Name is: $name")
 
     val result = {
       annottees.map(_.tree).toList match {
