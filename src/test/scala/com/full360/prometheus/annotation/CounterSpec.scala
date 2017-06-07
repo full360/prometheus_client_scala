@@ -23,9 +23,11 @@ package com.full360.prometheus.annotation
 
 import com.full360.prometheus.{ BaseSpec, Prometheus }
 
+import org.joda.time.DateTime
+
 class CounterSpec extends BaseSpec {
 
-  @Counter("a name")
+  @Counter(new DateTime(2016, 6, 7))
   def dummy() = {
     println("dummy execution")
   }
