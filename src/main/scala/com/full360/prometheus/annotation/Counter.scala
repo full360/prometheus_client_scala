@@ -19,12 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metric
+package com.full360.prometheus.annotation
 
-import scala.annotation.StaticAnnotation
+import scala.annotation.{ StaticAnnotation, compileTimeOnly }
 import scala.reflect.macros.blackbox
 
-class Counter extends StaticAnnotation {
+@compileTimeOnly("Enable macro paradise to expand macro annotations")
+final class Counter(name: String) extends StaticAnnotation {
 
   def macroTransform(annottees: Any*): Any = macro Counter.impl
 }

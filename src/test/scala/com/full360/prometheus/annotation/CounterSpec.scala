@@ -19,13 +19,13 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metric
+package com.full360.prometheus.annotation
 
 import com.full360.prometheus.{ BaseSpec, Prometheus }
 
 class CounterSpec extends BaseSpec {
 
-  @Counter
+  @Counter("a name")
   def dummy() = {
     println("dummy execution")
   }
