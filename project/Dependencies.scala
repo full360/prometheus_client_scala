@@ -30,6 +30,7 @@ object Dependencies {
       "io.prometheus"      % "simpleclient_hotspot"     % "0.0.21" % "compile",
       "io.prometheus"      % "simpleclient_servlet"     % "0.0.21" % "compile",
       "io.prometheus"      % "simpleclient_pushgateway" % "0.0.21" % "compile",
+      "org.scala-lang"     % "scala-reflect"            % "2.11.8" % "compile",
       "com.twitter"       %% "finatra-http"             % "2.2.0"  % "provided",
       "com.typesafe.akka" %% "akka-http"                % "10.0.5" % "provided",
       "org.scalatest"     %% "scalatest"                % "3.0.1"  % "test",

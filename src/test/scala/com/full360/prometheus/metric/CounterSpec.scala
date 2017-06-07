@@ -19,23 +19,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.client.http
+package com.full360.prometheus.metric
 
-import com.full360.prometheus.client.metric.namespace.Http
-import com.full360.prometheus.client.metric.telemetry.Latency
+import com.full360.prometheus.{ BaseSpec, Prometheus }
 
-trait HttpLatency extends Http with Latency {
+class CounterSpec extends BaseSpec {
 
-  override val name = "request_duration_milliseconds"
-  override val help = "A Summary for response latency"
-  override val labels = Seq(
-    "method",
-    "host",
-    "path",
-    "code"
-  )
+  @Counter
+  def dummy() = {
+    println("dummy execution")
+  }
 
-  def register(duration: Long, method: String, host: String, uri: String, response: Int) = {
-    super.register(duration, method, host, uri, response.toString)
+  "Prometheus" should provide {
+    "a counter annotation" which {
+      "increase the counter by 1" in {
+
+        dummy()
+        println("done")
+        println(Prometheus.toString)
+      }
+    }
   }
 }

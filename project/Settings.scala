@@ -55,7 +55,9 @@ object Settings {
       "-Ywarn-numeric-widen",
       "-Ywarn-unused-import"
     ),
-    shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " }
+    shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " },
+
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )
 
   private lazy val assemble = Seq(

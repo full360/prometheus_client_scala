@@ -19,29 +19,34 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.client.metric
+package com.full360.prometheus.metric
 
-import com.full360.prometheus.client.util.Implicits._
+import scala.annotation.StaticAnnotation
+import scala.reflect.macros.blackbox
 
-import io.prometheus.client.CollectorRegistry
+class Counter extends StaticAnnotation {
 
-trait Metric {
-
-  val namespace: String
-  val name: String
-  val help: String
-  val labels: Seq[String]
-
-  def registry = Metric.registry
-
-  def cacheKey = "%s_%s".format(namespace, name)
+  def macroTransform(annottees: Any*): Any = macro Counter.impl
 }
 
-object Metric {
+object Counter {
 
-  val registry = new CollectorRegistry(true)
+  def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
+    import c.universe._
 
-  override def toString = registry
-    .metricFamilySamples()
-    .asString
+    val result = {
+      annottees.map(_.tree).toList match {
+        case q"$mods def $methodName[..$tpes](...$args): $returnType = { ..$body }" :: Nil ⇒
+          q"""$mods def $methodName[..$tpes](...$args): $returnType = {
+                com.full360.prometheus.Prometheus.counter("name","help").inc()
+                println("OMG")
+                val result = {..$body}
+                result
+              }"""
+        case _                                                                             ⇒
+          c.abort(c.enclosingPosition, "Annotation @Benchmark can be used only with methods")
+      }
+    }
+    c.Expr[Any](result)
+  }
 }

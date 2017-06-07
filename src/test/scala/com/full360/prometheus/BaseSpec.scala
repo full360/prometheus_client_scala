@@ -19,17 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.client.http.akka
+package com.full360.prometheus
 
-import com.full360.prometheus.client.metric.Metric
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{ Matchers, WordSpecLike }
 
-import akka.http.scaladsl.server.Directives.{ complete, get, path }
+trait BaseSpec extends WordSpecLike with MockitoSugar with Matchers {
 
-object AkkaHttpMetricDirective {
-
-  val metricDirective = path("metrics") {
-    get {
-      complete(Metric.toString())
-    }
-  }
+  def provide = afterWord("provide")
 }

@@ -19,23 +19,35 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.client.http
+package com.full360.prometheus
 
-import com.full360.prometheus.client.metric.namespace.Http
-import com.full360.prometheus.client.metric.telemetry.Counter
+import scala.collection.concurrent.TrieMap
 
-trait HttpCounter extends Http with Counter {
+import java.io.StringWriter
 
-  override val name = "request_exception_counter"
-  override val help = "A Counter for request exceptions"
-  override val labels = Seq(
-    "method",
-    "host",
-    "path",
-    "code"
-  )
+import io.prometheus.client.exporter.common.TextFormat
+import io.prometheus.client.{ CollectorRegistry, Counter, Gauge, Histogram, Summary }
 
-  def register(method: String, host: String, uri: String, response: Int) = {
-    super.register(method, host, uri, response.toString)
+object Prometheus {
+
+  private val registry = new CollectorRegistry(true)
+
+  private val gauges = TrieMap.empty[String, Gauge]
+  private val counters = TrieMap.empty[String, Counter]
+  private val summaries = TrieMap.empty[String, Summary]
+  private val histograms = TrieMap.empty[String, Histogram]
+
+  def counter(name: String, help: String, namespace: String = "", labels: Seq[String] = Seq()) =
+    counters.getOrElseUpdate(name, Counter.build()
+      .name(name)
+      .help(help)
+      .namespace(namespace)
+      .labelNames(labels: _*)
+      .register(registry))
+
+  override def toString = {
+    val writer = new StringWriter
+    TextFormat.write004(writer, registry.metricFamilySamples())
+    writer.toString
   }
 }
