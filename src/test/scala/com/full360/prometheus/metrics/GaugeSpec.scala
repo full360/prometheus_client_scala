@@ -37,7 +37,10 @@ class GaugeSpec extends BaseSpec {
   @Gauge(Metric(name, help, Map("method" -> "bar")))
   def bar(assert: => Unit) = assert
 
-  "Metric" should provide {
+  @Counter(Metric(name, help, Map("method" -> "baz")))
+  def baz(a: Int, b: Int): Int = a + b
+
+  "Gauge metric" should provide {
     "a gauge annotation" which {
       "increase and decrease by 1" in {
         assertThat(Metric.get(), is(""))
@@ -58,6 +61,9 @@ class GaugeSpec extends BaseSpec {
           }
         }
         assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="bar",} 0.0\n$name{method="foo",} 0.0\n"""))
+      }
+      "does not affect parameters and result of the method" in {
+        assertThat(baz(4, 6), is(10))
       }
     }
   }

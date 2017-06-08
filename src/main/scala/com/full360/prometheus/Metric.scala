@@ -60,6 +60,17 @@ object Metric {
       .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
       .register(registry))
 
+  def summary(metric: Metric) =
+    summaries.getOrElseUpdate(metric.name, Summary.build()
+      .name(metric.name)
+      .help(metric.help)
+      .namespace(metric.namespace)
+      .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
+      .quantile(0.50, 0.05)
+      .quantile(0.90, 0.01)
+      .quantile(0.99, 0.01)
+      .register(registry))
+
   def get() = {
     val writer = new StringWriter
     TextFormat.write004(writer, registry.metricFamilySamples())
