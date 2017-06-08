@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
+import scalariform.formatter.preferences.{ AlignArguments, AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
 
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
@@ -68,9 +68,10 @@ object Settings {
   private lazy val format = {
 
     val preferences = FormattingPreferences()
-      .setPreference(RewriteArrowSymbols, true)
-      .setPreference(AlignParameters, true)
       .setPreference(AlignSingleLineCaseStatements, true)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignArguments, true)
+      .setPreference(RewriteArrowSymbols, false)
       .setPreference(DoubleIndentClassDeclaration, true)
       .setPreference(SpacesAroundMultiImports, true)
 

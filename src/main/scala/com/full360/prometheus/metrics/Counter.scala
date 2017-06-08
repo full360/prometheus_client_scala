@@ -38,22 +38,22 @@ object Counter {
     import c.universe._
 
     val params = c.prefix.tree match {
-      case q"""new Counter(...$params)""" ⇒ params
-      case _                              ⇒ c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
+      case q"""new Counter(...$params)""" => params
+      case _                              => c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
     }
 
     val metric = params match {
-      case List(List(tree)) ⇒ tree
-      case _                ⇒ c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
+      case List(List(tree)) => tree
+      case _                => c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
     }
 
     val result = annottees.map(_.tree).toList match {
-      case q"$mods def $methodName[..$types](...$args): $returnType = { ..$body }" :: Nil ⇒
+      case q"$mods def $methodName[..$types](...$args): $returnType = { ..$body }" :: Nil =>
         q"""$mods def $methodName[..$types](...$args): $returnType = {
                 com.full360.prometheus.Metric.counter($metric).inc()
                 $body
               }"""
-      case _                                                                              ⇒
+      case _                                                                              =>
         c.abort(c.enclosingPosition, "Annotation @Counter can be used only with methods")
     }
 
