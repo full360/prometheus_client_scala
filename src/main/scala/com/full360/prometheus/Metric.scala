@@ -32,7 +32,8 @@ case class Metric(
   name: String,
   help: String,
   labels: Map[String, String] = Map(),
-  namespace: String = ""
+  namespace: String = "",
+  buckets: Seq[Double] = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0)
 )
 
 object Metric {
@@ -69,6 +70,15 @@ object Metric {
       .quantile(0.50, 0.05)
       .quantile(0.90, 0.01)
       .quantile(0.99, 0.01)
+      .register(registry))
+
+  def histogram(metric: Metric) =
+    histograms.getOrElseUpdate(metric.name, Histogram.build()
+      .name(metric.name)
+      .help(metric.help)
+      .namespace(metric.namespace)
+      .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
+      .buckets(metric.buckets: _*)
       .register(registry))
 
   def get() = {

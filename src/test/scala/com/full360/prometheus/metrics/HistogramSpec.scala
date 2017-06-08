@@ -29,7 +29,7 @@ import org.hamcrest.MatcherAssert._
 import org.hamcrest.Matchers._
 import org.scalactic.TolerantNumerics
 
-class SummarySpec extends BaseSpec {
+class HistogramSpec extends BaseSpec {
 
   val name = "name"
   val help = "help"
@@ -39,17 +39,17 @@ class SummarySpec extends BaseSpec {
 
   implicit val doubleEq = TolerantNumerics.tolerantDoubleEquality(timeError)
 
-  @Summary(Metric(name, help, Map("method" -> "foo")))
+  @Histogram(Metric(name, help, Map("method" -> "foo")))
   def foo() = TimeUnit.MILLISECONDS.sleep(time)
 
-  @Summary(Metric(name, help, Map("method" -> "bar")))
+  @Histogram(Metric(name, help, Map("method" -> "bar")))
   def bar() = TimeUnit.MILLISECONDS.sleep(time)
 
-  @Counter(Metric(name, help, Map("method" -> "baz")))
+  @Histogram(Metric(name, help, Map("method" -> "baz")))
   def baz(a: Int, b: Int): Int = a + b
 
-  "Summary metric" should provide {
-    "a summary annotation" which {
+  "Histogram metric" should provide {
+    "a histogram annotation" which {
       "tracks the time a piece code consumes" in {
         assertThat(Metric.get(), is(""))
 
@@ -57,12 +57,8 @@ class SummarySpec extends BaseSpec {
 
         val array = Metric.get().replace('\n', ' ').split(' ')
 
-        assert(array(9).toDouble === time.toDouble)
-        assert(array(11).toDouble === time.toDouble)
-        assert(array(13).toDouble === time.toDouble)
-        assert(array(17).toDouble === time.toDouble)
-
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name summary\n$name{method="foo",quantile="0.5",} ${array(9)}\n$name{method="foo",quantile="0.9",} ${array(11)}\n$name{method="foo",quantile="0.99",} ${array(13)}\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(17)}\n"""))
+        assert(array(41).toDouble === time.toDouble)
+        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name histogram\n${name}_bucket{method="foo",le="0.005",} 0.0\n${name}_bucket{method="foo",le="0.01",} 0.0\n${name}_bucket{method="foo",le="0.025",} 0.0\n${name}_bucket{method="foo",le="0.05",} 0.0\n${name}_bucket{method="foo",le="0.075",} 0.0\n${name}_bucket{method="foo",le="0.1",} 0.0\n${name}_bucket{method="foo",le="0.25",} 0.0\n${name}_bucket{method="foo",le="0.5",} 0.0\n${name}_bucket{method="foo",le="0.75",} 0.0\n${name}_bucket{method="foo",le="1.0",} 0.0\n${name}_bucket{method="foo",le="2.5",} 0.0\n${name}_bucket{method="foo",le="5.0",} 0.0\n${name}_bucket{method="foo",le="7.5",} 0.0\n${name}_bucket{method="foo",le="10.0",} 0.0\n${name}_bucket{method="foo",le="+Inf",} 1.0\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(41)}\n"""))
       }
       "does not affect parameters and result of the method" in {
         assertThat(baz(4, 6), is(10))
