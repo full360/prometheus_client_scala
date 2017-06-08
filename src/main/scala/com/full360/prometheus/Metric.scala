@@ -19,27 +19,45 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.annotation
+package com.full360.prometheus
 
-import com.full360.prometheus.{ BaseSpec, Prometheus }
+import scala.collection.concurrent.TrieMap
 
-import org.joda.time.DateTime
+import java.io.StringWriter
 
-class CounterSpec extends BaseSpec {
+import io.prometheus.client.exporter.common.TextFormat
+import io.prometheus.client.{ CollectorRegistry, Counter, Gauge, Histogram, Summary }
 
-  @Counter(new DateTime(2016, 6, 7))
-  def dummy() = {
-    println("dummy execution")
+case class Metric(name: String, help: String)
+
+object Metric {
+
+  private val registry = new CollectorRegistry(true)
+
+  private val gauges = TrieMap.empty[String, Gauge]
+  private val counters = TrieMap.empty[String, Counter]
+  private val summaries = TrieMap.empty[String, Summary]
+  private val histograms = TrieMap.empty[String, Histogram]
+
+  def counter(metric: Metric) =
+    counters.getOrElseUpdate(metric.name, Counter.build()
+      .name(metric.name)
+      .help(metric.help)
+      //.namespace(namespace)
+      //.labelNames(labels: _*)
+      .register(registry))
+
+  def get() = {
+    val writer = new StringWriter
+    TextFormat.write004(writer, registry.metricFamilySamples())
+    writer.toString
   }
 
-  "Prometheus" should provide {
-    "a counter annotation" which {
-      "increase the counter by 1" in {
-
-        dummy()
-        println("done")
-        println(Prometheus.toString)
-      }
-    }
+  def clear() = {
+    gauges.clear()
+    counters.clear()
+    summaries.clear()
+    histograms.clear()
+    registry.clear()
   }
 }

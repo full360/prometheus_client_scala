@@ -22,9 +22,11 @@
 package com.full360.prometheus
 
 import org.scalatest.mockito.MockitoSugar
-import org.scalatest.{ Matchers, WordSpecLike }
+import org.scalatest.{ BeforeAndAfterEach, Matchers, WordSpecLike }
 
-trait BaseSpec extends WordSpecLike with MockitoSugar with Matchers {
+trait BaseSpec extends WordSpecLike with BeforeAndAfterEach with MockitoSugar with Matchers {
 
   def provide = afterWord("provide")
+
+  override protected def afterEach() = Metric.clear()
 }

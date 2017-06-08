@@ -19,35 +19,31 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus
+package com.full360.prometheus.metrics
 
-import scala.collection.concurrent.TrieMap
+import com.full360.prometheus.{ BaseSpec, Metric }
 
-import java.io.StringWriter
+import org.hamcrest.MatcherAssert._
+import org.hamcrest.Matchers._
 
-import io.prometheus.client.exporter.common.TextFormat
-import io.prometheus.client.{ CollectorRegistry, Counter, Gauge, Histogram, Summary }
+class CounterSpec extends BaseSpec {
 
-object Prometheus {
+  val name = "name"
+  val help = "help"
+  val metric = Metric(name, help)
 
-  private val registry = new CollectorRegistry(true)
+  @Counter(metric)
+  def dummy() = {}
 
-  private val gauges = TrieMap.empty[String, Gauge]
-  private val counters = TrieMap.empty[String, Counter]
-  private val summaries = TrieMap.empty[String, Summary]
-  private val histograms = TrieMap.empty[String, Histogram]
-
-  def counter(name: String, help: String, namespace: String = "", labels: Seq[String] = Seq()) =
-    counters.getOrElseUpdate(name, Counter.build()
-      .name(name)
-      .help(help)
-      .namespace(namespace)
-      .labelNames(labels: _*)
-      .register(registry))
-
-  override def toString = {
-    val writer = new StringWriter
-    TextFormat.write004(writer, registry.metricFamilySamples())
-    writer.toString
+  "Metric" should provide {
+    "a counter annotation" which {
+      "increase the counter by 1" in {
+        assertThat(Metric.get(), is(""))
+        dummy()
+        assertThat(Metric.get(), is(s"# HELP $name $help\n# TYPE $name counter\n$name 1.0\n"))
+        dummy()
+        assertThat(Metric.get(), is(s"# HELP $name $help\n# TYPE $name counter\n$name 2.0\n"))
+      }
+    }
   }
 }

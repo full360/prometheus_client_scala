@@ -19,15 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.annotation
+package com.full360.prometheus.metrics
+
+import com.full360.prometheus.Metric
 
 import scala.annotation.{ StaticAnnotation, compileTimeOnly }
 import scala.reflect.macros.blackbox
 
-import org.joda.time.DateTime
-
 @compileTimeOnly("Enable macro paradise to expand macro annotations")
-final class Counter(time: DateTime) extends StaticAnnotation {
+final class Counter(metric: Metric) extends StaticAnnotation {
 
   def macroTransform(annottees: Any*): Any = macro Counter.impl
 }
@@ -37,43 +37,21 @@ object Counter {
   def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
     import c.universe._
 
-    /*
-    def eval(tree: Trees#Tree) = tree match {
-      case Literal(Constant(value: String)) ⇒ value
-      case _                                ⇒ c.abort(c.enclosingPosition, "Annotation @Benchmark with unexpected annotation type")
-    }
-
-    val name = c.prefix.tree match {
-      case q"new Counter($name)" ⇒ eval(name)
-      case _                     ⇒ c.abort(c.enclosingPosition, "Annotation @Benchmark with unexpected annotation pattern")
-    }
-    */
-
     val params = c.prefix.tree match {
-      case q"""new Counter(...$paramss)""" ⇒ paramss
-      case _                               ⇒ c.abort(c.enclosingPosition, "Annotation @Counter with unexpected annotation pattern")
+      case q"""new Counter(...$params)""" ⇒ params
+      case _                              ⇒ c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
     }
 
-    println(showRaw(params))
-
-    val d: DateTime = params match {
-      case List(List(AssignOrNamedArg(
-      _, Apply(_, List(Literal(Constant(y)), Literal(Constant(m)), Literal(Constant(d))))))) =>
-        new DateTime(y.asInstanceOf[Int], m.asInstanceOf[Int], d.asInstanceOf[Int], 0, 0)
-      case List(List(Apply(_, List(Literal(Constant(y)),
-      Literal(Constant(m)), Literal(Constant(d))))))                                         =>
-        new DateTime(y.asInstanceOf[Int], m.asInstanceOf[Int], d.asInstanceOf[Int], 0, 0)
+    val metric = params match {
+      case List(List(tree)) ⇒ tree
+      case _                ⇒ c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
     }
-
-    println(d.toString("yyyy-MM-dd"))
 
     val result = annottees.map(_.tree).toList match {
       case q"$mods def $methodName[..$types](...$args): $returnType = { ..$body }" :: Nil ⇒
         q"""$mods def $methodName[..$types](...$args): $returnType = {
-                com.full360.prometheus.Prometheus.counter("name","help").inc()
-                println("OMG")
-                val result = {..$body}
-                result
+                com.full360.prometheus.Metric.counter($metric).inc()
+                $body
               }"""
       case _                                                                              ⇒
         c.abort(c.enclosingPosition, "Annotation @Counter can be used only with methods")

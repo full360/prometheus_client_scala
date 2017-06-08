@@ -52,8 +52,8 @@ object Settings {
       "-Xlint",
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
-      "-Ywarn-numeric-widen" //,
-      //"-Ywarn-unused-import"
+      "-Ywarn-numeric-widen",
+      "-Ywarn-unused-import"
     ),
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " },
 

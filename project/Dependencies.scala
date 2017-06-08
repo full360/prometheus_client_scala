@@ -33,8 +33,9 @@ object Dependencies {
       "org.scala-lang"     % "scala-reflect"            % "2.11.8" % "compile",
       "com.twitter"       %% "finatra-http"             % "2.2.0"  % "provided",
       "com.typesafe.akka" %% "akka-http"                % "10.0.5" % "provided",
-      "org.scalatest"     %% "scalatest"                % "3.0.1"  % "test",
-      "org.mockito"        % "mockito-core"             % "2.7.19" % "test"
+      "org.scalatest"     %% "scalatest"                % "3.0.3"  % "test",
+      "org.mockito"        % "mockito-core"             % "2.8.9"  % "test",
+      "org.hamcrest"       % "hamcrest-all"             % "1.3"    % "test"
   ))
   // @formatter:on
 }
