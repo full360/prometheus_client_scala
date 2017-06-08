@@ -19,24 +19,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http
 
-object Dependencies {
+import com.full360.prometheus.Metric
 
-  // @formatter:off
-  def apply() = Seq(libraryDependencies ++= Seq(
-      "io.prometheus"      % "simpleclient"             % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_hotspot"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_servlet"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_pushgateway" % "0.0.21" % "compile",
-      "org.scala-lang"     % "scala-reflect"            % "2.11.8" % "compile",
-      "com.twitter"       %% "finatra-http"             % "2.2.0"  % "provided",
-      "com.typesafe.akka" %% "akka-http"                % "10.0.5" % "provided",
-      "org.scalatest"     %% "scalatest"                % "3.0.3"  % "test",
-      "org.mockito"        % "mockito-core"             % "2.8.9"  % "test",
-      "org.hamcrest"       % "hamcrest-all"             % "1.3"    % "test",
-      "com.typesafe.akka" %% "akka-http-testkit"        % "10.0.5" % "test"
-  ))
-  // @formatter:on
+trait HttpCounter {
+
+  def create(method: String, code: String, path: String) = Metric(
+    namespace = "http",
+    name      = "request_count",
+    help      = "A Counter for http request",
+    labels    = Map("method" -> method, "code" -> code, "path" -> path)
+  )
 }

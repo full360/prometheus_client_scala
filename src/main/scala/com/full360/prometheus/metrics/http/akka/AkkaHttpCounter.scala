@@ -19,24 +19,32 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.akka
 
-object Dependencies {
+import com.full360.prometheus.metrics.Counter
+import com.full360.prometheus.metrics.http.HttpCounter
 
-  // @formatter:off
-  def apply() = Seq(libraryDependencies ++= Seq(
-      "io.prometheus"      % "simpleclient"             % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_hotspot"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_servlet"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_pushgateway" % "0.0.21" % "compile",
-      "org.scala-lang"     % "scala-reflect"            % "2.11.8" % "compile",
-      "com.twitter"       %% "finatra-http"             % "2.2.0"  % "provided",
-      "com.typesafe.akka" %% "akka-http"                % "10.0.5" % "provided",
-      "org.scalatest"     %% "scalatest"                % "3.0.3"  % "test",
-      "org.mockito"        % "mockito-core"             % "2.8.9"  % "test",
-      "org.hamcrest"       % "hamcrest-all"             % "1.3"    % "test",
-      "com.typesafe.akka" %% "akka-http-testkit"        % "10.0.5" % "test"
-  ))
-  // @formatter:on
+import akka.http.scaladsl.server.Directive0
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+
+trait AkkaHttpCounter extends HttpCounter {
+
+  def counter: Directive0 = counterPath()
+
+  def counterPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+    mapResponse { response ⇒
+
+      val path = uri match {
+        case ""    => context.request.uri.path.toString()
+        case value => value
+      }
+      val method = context.request.method.value.toLowerCase
+      val code = response.status.intValue().toString
+
+      @Counter(create(method, code, path))
+      def count() = response
+
+      count()
+    }
+  }
 }
