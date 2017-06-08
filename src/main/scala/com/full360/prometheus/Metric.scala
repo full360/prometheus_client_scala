@@ -28,7 +28,12 @@ import java.io.StringWriter
 import io.prometheus.client.exporter.common.TextFormat
 import io.prometheus.client.{ CollectorRegistry, Counter, Gauge, Histogram, Summary }
 
-case class Metric(name: String, help: String)
+case class Metric(
+  name: String,
+  help: String,
+  labels: Map[String, String] = Map(),
+  namespace: String = ""
+)
 
 object Metric {
 
@@ -43,8 +48,8 @@ object Metric {
     counters.getOrElseUpdate(metric.name, Counter.build()
       .name(metric.name)
       .help(metric.help)
-      //.namespace(namespace)
-      //.labelNames(labels: _*)
+      .namespace(metric.namespace)
+      .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
       .register(registry))
 
   def get() = {

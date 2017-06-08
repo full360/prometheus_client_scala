@@ -30,19 +30,27 @@ class CounterSpec extends BaseSpec {
 
   val name = "name"
   val help = "help"
-  val metric = Metric(name, help)
 
-  @Counter(metric)
-  def dummy() = {}
+  @Counter(Metric(name, help, Map("method" -> "foo")))
+  def foo() = {}
+
+  @Counter(Metric(name, help, Map("method" -> "bar")))
+  def bar() = {}
 
   "Metric" should provide {
     "a counter annotation" which {
       "increase the counter by 1" in {
         assertThat(Metric.get(), is(""))
-        dummy()
-        assertThat(Metric.get(), is(s"# HELP $name $help\n# TYPE $name counter\n$name 1.0\n"))
-        dummy()
-        assertThat(Metric.get(), is(s"# HELP $name $help\n# TYPE $name counter\n$name 2.0\n"))
+        foo()
+        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="foo",} 1.0\n"""))
+        foo()
+        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="foo",} 2.0\n"""))
+      }
+      "increase the counter by 1 with different labels" in {
+        assertThat(Metric.get(), is(""))
+        foo()
+        bar()
+        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="bar",} 1.0\n$name{method="foo",} 1.0\n"""))
       }
     }
   }

@@ -50,7 +50,12 @@ object Counter {
     val result = annottees.map(_.tree).toList match {
       case q"$mods def $methodName[..$types](...$args): $returnType = { ..$body }" :: Nil =>
         q"""$mods def $methodName[..$types](...$args): $returnType = {
-                com.full360.prometheus.Metric.counter($metric).inc()
+                import com.full360.prometheus.Metric
+
+                Metric.counter($metric)
+                      .labels($metric.labels.map({case (_, value) => value}).toSeq: _*)
+                      .inc()
+
                 $body
               }"""
       case _                                                                              =>
