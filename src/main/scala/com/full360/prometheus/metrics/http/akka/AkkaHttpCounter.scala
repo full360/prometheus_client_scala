@@ -24,6 +24,7 @@ package com.full360.prometheus.metrics.http.akka
 import com.full360.prometheus.metrics.Counter
 import com.full360.prometheus.metrics.http.HttpCounter
 
+import akka.http.scaladsl.model.HttpResponse
 import akka.http.scaladsl.server.Directive0
 import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
 
@@ -41,11 +42,13 @@ trait AkkaHttpCounter extends HttpCounter {
       val method = context.request.method.value.toLowerCase
       val code = response.status.intValue().toString
 
-      @Counter(create(method, code, path))
-      def register() = {}
-
-      register()
-      response
+      test(method, code, path, response)
     }
+  }
+
+  def test(method: String, code: String, path: String, response: HttpResponse): HttpResponse = {
+    @Counter(create(method, code, path))
+    def register() = response
+    register()
   }
 }
