@@ -61,7 +61,7 @@ object Gauge {
                   gauge.dec()
                 }
               }"""
-      case _                                                                              =>
+      case _ =>
         c.abort(c.enclosingPosition, "Annotation @Gauge can be used only with methods")
     }
 

@@ -58,7 +58,7 @@ object Counter {
 
                 ..$body
               }"""
-      case _                                                                              =>
+      case _ =>
         c.abort(c.enclosingPosition, "Annotation @Counter can be used only with methods")
     }
 

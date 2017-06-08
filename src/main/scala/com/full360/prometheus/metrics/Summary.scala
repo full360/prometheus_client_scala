@@ -63,7 +63,7 @@ object Summary {
                         .observe((stopTime - startTime).toDouble)
                 }
               }"""
-      case _                                                                              =>
+      case _ =>
         c.abort(c.enclosingPosition, "Annotation @Summary can be used only with methods")
     }
 

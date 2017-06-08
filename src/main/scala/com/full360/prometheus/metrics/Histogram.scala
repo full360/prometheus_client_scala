@@ -63,7 +63,7 @@ object Histogram {
                         .observe((stopTime - startTime).toDouble)
                 }
               }"""
-      case _                                                                              =>
+      case _ =>
         c.abort(c.enclosingPosition, "Annotation @Histogram can be used only with methods")
     }
 
