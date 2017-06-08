@@ -27,24 +27,24 @@ import scala.annotation.{ StaticAnnotation, compileTimeOnly }
 import scala.reflect.macros.blackbox
 
 @compileTimeOnly("Enable macro paradise to expand macro annotations")
-final class Counter(metric: Metric) extends StaticAnnotation {
+final class Gauge(metric: Metric) extends StaticAnnotation {
 
-  def macroTransform(annottees: Any*): Any = macro Counter.impl
+  def macroTransform(annottees: Any*): Any = macro Gauge.impl
 }
 
-object Counter {
+object Gauge {
 
   def impl(c: blackbox.Context)(annottees: c.Expr[Any]*): c.Expr[Any] = {
     import c.universe._
 
     val params = c.prefix.tree match {
-      case q"""new Counter(...$params)""" => params
-      case _                              => c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
+      case q"""new Gauge(...$params)""" => params
+      case _                            => c.abort(c.enclosingPosition, "Annotation @Gauge with unexpected parameter pattern")
     }
 
     val metric = params match {
       case List(List(tree)) => tree
-      case _                => c.abort(c.enclosingPosition, "Annotation @Counter with unexpected parameter pattern")
+      case _                => c.abort(c.enclosingPosition, "Annotation @Gauge with unexpected parameter pattern")
     }
 
     val result = annottees.map(_.tree).toList match {
@@ -52,14 +52,17 @@ object Counter {
         q"""$mods def $methodName[..$types](...$args): $returnType = {
                 import com.full360.prometheus.Metric
 
-                Metric.counter($metric)
-                      .labels($metric.labels.map({case (_, value) => value}).toSeq: _*)
-                      .inc()
-
-                ..$body
+                val gauge = Metric.gauge($metric)
+                                  .labels($metric.labels.map({case (_, value) => value}).toSeq: _*)
+                gauge.inc()
+                try {
+                  ..$body
+                } finally {
+                  gauge.dec()
+                }
               }"""
       case _                                                                              =>
-        c.abort(c.enclosingPosition, "Annotation @Counter can be used only with methods")
+        c.abort(c.enclosingPosition, "Annotation @Gauge can be used only with methods")
     }
 
     c.Expr[Any](result)

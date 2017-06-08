@@ -56,6 +56,7 @@ object Settings {
       "-Ywarn-unused-import"
     ),
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " },
+    parallelExecution in Test := false,
 
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )

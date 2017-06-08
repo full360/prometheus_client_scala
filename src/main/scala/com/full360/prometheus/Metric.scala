@@ -44,6 +44,14 @@ object Metric {
   private val summaries = TrieMap.empty[String, Summary]
   private val histograms = TrieMap.empty[String, Histogram]
 
+  def gauge(metric: Metric) =
+    gauges.getOrElseUpdate(metric.name, Gauge.build()
+      .name(metric.name)
+      .help(metric.help)
+      .namespace(metric.namespace)
+      .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
+      .register(registry))
+
   def counter(metric: Metric) =
     counters.getOrElseUpdate(metric.name, Counter.build()
       .name(metric.name)
