@@ -42,9 +42,10 @@ trait AkkaHttpCounter extends HttpCounter {
       val code = response.status.intValue().toString
 
       @Counter(create(method, code, path))
-      def returnResponse() = response
+      def register() = {}
 
-      returnResponse()
+      register()
+      response
     }
   }
 }
