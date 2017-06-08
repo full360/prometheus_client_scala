@@ -26,7 +26,7 @@ import com.full360.prometheus.Metric
 trait HttpCounter {
 
   def create(method: String, code: String, path: String) = Metric(
-    namespace = "http",
+    namespace = "http_server",
     name      = "request_count",
     help      = "A Counter for http request",
     labels    = Map("method" -> method, "code" -> code, "path" -> path)
