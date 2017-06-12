@@ -21,43 +21,28 @@
 
 package com.full360.prometheus.metrics.http.finatra
 
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Status._
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.http.test.EmbeddedHttpServer
-import com.twitter.finatra.http.{ Controller, HttpServer }
-import com.twitter.inject.server.FeatureTest
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
+import com.twitter.util.Future
 
-class FinatraDummySpec extends FeatureTest {
+class FinatraDummyFilter extends SimpleFilter[Request, Response] {
 
-  lazy val controller = new Controller {
-    get("/character/:character/ability/:ability") { request: Request =>
-      s"${request.params("character")} used ${request.params("ability")}!"
+  override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
+
+    val path = request.params match {
+      case params if params.isEmpty => request.uri
+      case params                   => params.foldLeft(request.uri) { (path, param) =>
+        path.replaceFirst(s"/${param._2}", s"/:${param._1}")
+      }
     }
+
+    println(path)
+
+    service(request)
+      .onSuccess(response ⇒ register(request, Some(response)))
+      .onFailure(_ ⇒ register(request))
   }
-  lazy val http = new HttpServer {
 
-    override val disableAdminHttpServer = true
-
-    override protected def configureHttp(router: HttpRouter) = {
-      router
-        .filter[FinatraDummyFilter]
-        .add(controller)
-    }
-  }
-  override val server = new EmbeddedHttpServer(
-    twitterServer      = http,
-    verbose            = false,
-    disableTestLogging = true
-  )
-
-  "Server" should {
-    "Say hi" in {
-      server.httpGet(
-        path      = "/character/Itachi/ability/Amaterasu",
-        andExpect = Ok,
-        withBody  = "Itachi used Amaterasu!"
-      )
-    }
+  def register(request: Request, response: Option[Response] = None) = {
   }
 }
