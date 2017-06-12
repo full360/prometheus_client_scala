@@ -42,11 +42,11 @@ class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
   "Counter metric" should provide {
     "a counter DSL for Akka Http" which {
       "increase the counter by 1" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
 
         Get() ~> route ~> check {
           assertThat(responseAs[String], is("foo"))
-          assertThat(Metric.get(), is(
+          assertThat(Metric.getRegistry, is(
             s"""# HELP ${namespace}_$name $help
                |# TYPE ${namespace}_$name counter
                |${namespace}_$name{method="get",code="200",path="/",} 1.0
@@ -54,7 +54,7 @@ class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
           ))
 
           Get() ~> route ~> check {
-            assertThat(Metric.get(), is(
+            assertThat(Metric.getRegistry, is(
               s"""# HELP ${namespace}_$name $help
                  |# TYPE ${namespace}_$name counter
                  |${namespace}_$name{method="get",code="200",path="/",} 2.0

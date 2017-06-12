@@ -26,7 +26,8 @@ import scala.collection.concurrent.TrieMap
 import java.io.StringWriter
 
 import io.prometheus.client.exporter.common.TextFormat
-import io.prometheus.client.{ CollectorRegistry, Counter, Gauge, Histogram, Summary }
+import io.prometheus.client.hotspot.{ ClassLoadingExports, GarbageCollectorExports, MemoryPoolsExports, StandardExports, ThreadExports, VersionInfoExports }
+import io.prometheus.client.{ Collector, CollectorRegistry, Counter, Gauge, Histogram, Summary }
 
 case class Metric(
   name:      String,
@@ -81,17 +82,26 @@ object Metric {
       .buckets(metric.buckets: _*)
       .register(registry))
 
-  def get() = {
+  def getRegistry = {
     val writer = new StringWriter
     TextFormat.write004(writer, registry.metricFamilySamples())
     writer.toString
   }
 
-  def clear() = {
+  def clearRegistry() = {
     gauges.clear()
     counters.clear()
     summaries.clear()
     histograms.clear()
     registry.clear()
+  }
+
+  def addJVMMetrics() = {
+    new StandardExports().register[Collector](registry)
+    new MemoryPoolsExports().register[Collector](registry)
+    new GarbageCollectorExports().register[Collector](registry)
+    new ThreadExports().register[Collector](registry)
+    new ClassLoadingExports().register[Collector](registry)
+    new VersionInfoExports().register[Collector](registry)
   }
 }

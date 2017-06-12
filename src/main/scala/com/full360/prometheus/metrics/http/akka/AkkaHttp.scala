@@ -26,14 +26,20 @@ import akka.http.scaladsl.server.RequestContext
 
 trait AkkaHttp {
 
-  def extract(uri: String, context: RequestContext, response: HttpResponse) = {
+  def extract(uri: String, context: RequestContext, response: HttpResponse): (String, String, String) = {
+    val (method, path) = extract(uri, context)
+    val code = response.status.intValue().toString
+
+    (method, code, path)
+  }
+
+  def extract(uri: String, context: RequestContext): (String, String) = {
     val path = uri match {
       case ""    => context.request.uri.path.toString()
       case value => value
     }
     val method = context.request.method.value.toLowerCase
-    val code = response.status.intValue().toString
 
-    (method, code, path)
+    (method, path)
   }
 }

@@ -51,14 +51,14 @@ class HistogramSpec extends BaseSpec {
   "Histogram metric" should provide {
     "a histogram annotation" which {
       "tracks the time a piece code consumes" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
 
         foo()
 
-        val array = Metric.get().replace('\n', ' ').split(' ')
+        val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
         assert(array(41).toDouble === time.toDouble)
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name histogram\n${name}_bucket{method="foo",le="0.005",} 0.0\n${name}_bucket{method="foo",le="0.01",} 0.0\n${name}_bucket{method="foo",le="0.025",} 0.0\n${name}_bucket{method="foo",le="0.05",} 0.0\n${name}_bucket{method="foo",le="0.075",} 0.0\n${name}_bucket{method="foo",le="0.1",} 0.0\n${name}_bucket{method="foo",le="0.25",} 0.0\n${name}_bucket{method="foo",le="0.5",} 0.0\n${name}_bucket{method="foo",le="0.75",} 0.0\n${name}_bucket{method="foo",le="1.0",} 0.0\n${name}_bucket{method="foo",le="2.5",} 0.0\n${name}_bucket{method="foo",le="5.0",} 0.0\n${name}_bucket{method="foo",le="7.5",} 0.0\n${name}_bucket{method="foo",le="10.0",} ${array(35)}\n${name}_bucket{method="foo",le="+Inf",} ${array(37)}\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(41)}\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name histogram\n${name}_bucket{method="foo",le="0.005",} 0.0\n${name}_bucket{method="foo",le="0.01",} 0.0\n${name}_bucket{method="foo",le="0.025",} 0.0\n${name}_bucket{method="foo",le="0.05",} 0.0\n${name}_bucket{method="foo",le="0.075",} 0.0\n${name}_bucket{method="foo",le="0.1",} 0.0\n${name}_bucket{method="foo",le="0.25",} 0.0\n${name}_bucket{method="foo",le="0.5",} 0.0\n${name}_bucket{method="foo",le="0.75",} 0.0\n${name}_bucket{method="foo",le="1.0",} 0.0\n${name}_bucket{method="foo",le="2.5",} 0.0\n${name}_bucket{method="foo",le="5.0",} 0.0\n${name}_bucket{method="foo",le="7.5",} 0.0\n${name}_bucket{method="foo",le="10.0",} ${array(35)}\n${name}_bucket{method="foo",le="+Inf",} ${array(37)}\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(41)}\n"""))
       }
       "does not affect parameters and result of the method" in {
         assertThat(baz(4, 6), is(10))

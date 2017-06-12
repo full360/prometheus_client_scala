@@ -43,17 +43,17 @@ class CounterSpec extends BaseSpec {
   "Counter metric" should provide {
     "a counter annotation" which {
       "increase the counter by 1" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
         foo()
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="foo",} 1.0\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="foo",} 1.0\n"""))
         foo()
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="foo",} 2.0\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="foo",} 2.0\n"""))
       }
       "increase the counter by 1 with different labels" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
         foo()
         bar()
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="bar",} 1.0\n$name{method="foo",} 1.0\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name counter\n$name{method="bar",} 1.0\n$name{method="foo",} 1.0\n"""))
       }
       "does not affect parameters and result of the method" in {
         assertThat(baz(4, 6), is(10))

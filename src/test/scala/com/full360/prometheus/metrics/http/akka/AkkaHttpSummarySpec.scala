@@ -45,19 +45,19 @@ class AkkaHttpSummarySpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
   "Summary metric" should provide {
     "a summary DSL for Akka Http" which {
       "tracks the time an endpoint consumes" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
 
         Get() ~> route ~> check {
           assertThat(responseAs[String], is("foo"))
 
-          val array = Metric.get().replace('\n', ' ').split(' ')
+          val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
           assert(array(15).toDouble === 0.0)
           assert(array(17).toDouble === 0.0)
           assert(array(19).toDouble === 0.0)
           assert(array(23).toDouble === 0.0)
 
-          assertThat(Metric.get(), is(
+          assertThat(Metric.getRegistry, is(
             s"""# HELP ${namespace}_$name $help
                |# TYPE ${namespace}_$name summary
                |${namespace}_$name{method="get",code="200",path="/",quantile="0.5",} ${array(15)}

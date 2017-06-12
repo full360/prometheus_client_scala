@@ -23,12 +23,12 @@ package com.full360.prometheus.metrics.http
 
 import com.full360.prometheus.Metric
 
-trait HttpSummary {
+trait HttpGauge {
 
   val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "A summary for http response in milliseconds"
-  val labels = Map("method" -> "", "code" -> "", "path" -> "")
+  val name = "request_gauge"
+  val help = "A gauge for http request"
+  val labels = Map("method" -> "", "path" -> "")
 
   def create() = Metric(name, help, labels, namespace)
 }

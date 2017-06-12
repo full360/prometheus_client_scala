@@ -43,24 +43,24 @@ class GaugeSpec extends BaseSpec {
   "Gauge metric" should provide {
     "a gauge annotation" which {
       "increase and decrease by 1" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
         foo {
-          assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 1.0\n"""))
+          assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 1.0\n"""))
           foo {
-            assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 2.0\n"""))
+            assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 2.0\n"""))
           }
         }
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 0.0\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 0.0\n"""))
       }
       "increase and decrease by 1 with different labels" in {
-        assertThat(Metric.get(), is(""))
+        assertThat(Metric.getRegistry, is(""))
         foo {
-          assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 1.0\n"""))
+          assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="foo",} 1.0\n"""))
           bar {
-            assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="bar",} 1.0\n$name{method="foo",} 1.0\n"""))
+            assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="bar",} 1.0\n$name{method="foo",} 1.0\n"""))
           }
         }
-        assertThat(Metric.get(), is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="bar",} 0.0\n$name{method="foo",} 0.0\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name gauge\n$name{method="bar",} 0.0\n$name{method="foo",} 0.0\n"""))
       }
       "does not affect parameters and result of the method" in {
         assertThat(baz(4, 6), is(10))

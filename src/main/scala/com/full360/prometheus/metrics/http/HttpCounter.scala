@@ -27,7 +27,7 @@ trait HttpCounter {
 
   val namespace = "http_server"
   val name = "request_count"
-  val help = "A Counter for http request"
+  val help = "A counter for http request"
   val labels = Map("method" -> "", "code" -> "", "path" -> "")
 
   def create() = Metric(name, help, labels, namespace)

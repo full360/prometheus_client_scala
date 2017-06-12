@@ -19,16 +19,37 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metrics.http
+package com.full360.prometheus.metrics.http.akka
 
-import com.full360.prometheus.Metric
+import com.full360.prometheus.{ BaseSpec, Metric }
 
-trait HttpSummary {
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.is
 
-  val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "A summary for http response in milliseconds"
-  val labels = Map("method" -> "", "code" -> "", "path" -> "")
+class AkkaHttpGaugeSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpGauge {
 
-  def create() = Metric(name, help, labels, namespace)
+  val route =
+    gauge {
+      pathSingleSlash {
+        get {
+          complete("foo")
+        }
+      }
+    }
+
+  "Gauge metric" should provide {
+    "a gauge DSL for Akka Http" which {
+      "increase and decrease by 1" in {
+        assertThat(Metric.getRegistry, is(""))
+
+        Get() ~> route ~> check {
+          assertThat(responseAs[String], is("foo"))
+
+          println(Metric.getRegistry)
+        }
+      }
+    }
+  }
 }

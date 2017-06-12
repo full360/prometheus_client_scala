@@ -19,16 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metrics.http
+package com.full360.prometheus.metrics.http.akka
 
 import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpGauge
 
-trait HttpSummary {
+import akka.http.scaladsl.server.Directive0
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
 
-  val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "A summary for http response in milliseconds"
-  val labels = Map("method" -> "", "code" -> "", "path" -> "")
+trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
 
-  def create() = Metric(name, help, labels, namespace)
+  def gauge: Directive0 = gaugePath()
+
+  def gaugePath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+    val (method, path) = extract(uri, context)
+
+    val gauge = Metric
+      .gauge(create())
+      .labels(method, path)
+
+    gauge.inc()
+
+    mapResponse { response ⇒
+      gauge.dec()
+      response
+    }
+  }
 }

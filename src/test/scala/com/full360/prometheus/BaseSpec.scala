@@ -28,5 +28,5 @@ trait BaseSpec extends WordSpecLike with BeforeAndAfterEach with MockitoSugar wi
 
   def provide = afterWord("provide")
 
-  override protected def afterEach() = Metric.clear()
+  override protected def afterEach() = Metric.clearRegistry()
 }
