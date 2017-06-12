@@ -21,27 +21,19 @@
 
 package com.full360.prometheus.metrics.http.akka
 
-import com.full360.prometheus.Metric
-import com.full360.prometheus.metrics.http.HttpCounter
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.server.RequestContext
 
-import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+trait AkkaHttp {
 
-trait AkkaHttpCounter extends HttpCounter with AkkaHttp {
-
-  def counter: Directive0 = counterPath()
-
-  def counterPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
-    mapResponse { response ⇒
-
-      val (method, code, path) = extract(uri, context, response)
-
-      Metric
-        .counter(create())
-        .labels(method, code, path)
-        .inc()
-
-      response
+  def extract(uri: String, context: RequestContext, response: HttpResponse) = {
+    val path = uri match {
+      case ""    => context.request.uri.path.toString()
+      case value => value
     }
+    val method = context.request.method.value.toLowerCase
+    val code = response.status.intValue().toString
+
+    (method, code, path)
   }
 }

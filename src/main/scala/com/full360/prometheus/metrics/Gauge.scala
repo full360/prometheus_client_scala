@@ -24,6 +24,7 @@ package com.full360.prometheus.metrics
 import com.full360.prometheus.Metric
 
 import scala.annotation.{ StaticAnnotation, compileTimeOnly }
+import scala.language.experimental.macros
 import scala.reflect.macros.blackbox
 
 @compileTimeOnly("Enable macro paradise to expand macro annotations")

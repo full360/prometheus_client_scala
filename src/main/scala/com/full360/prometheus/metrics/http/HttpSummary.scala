@@ -25,10 +25,10 @@ import com.full360.prometheus.Metric
 
 trait HttpSummary {
 
-  def create() = Metric(
-    namespace = "http_server",
-    name      = "request_duration_milliseconds",
-    help      = "A Summary for http response in milliseconds",
-    labels    = Map("method" -> "", "code" -> "", "path" -> "")
-  )
+  val namespace = "http_server"
+  val name = "request_duration_milliseconds"
+  val help = "A Summary for http response in milliseconds"
+  val labels = Map("method" -> "", "code" -> "", "path" -> "")
+
+  def create() = Metric(name, help, labels, namespace)
 }

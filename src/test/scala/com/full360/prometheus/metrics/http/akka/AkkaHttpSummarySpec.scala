@@ -27,11 +27,14 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.is
+import org.scalactic.TolerantNumerics
 
-class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpCounter {
+class AkkaHttpSummarySpec extends BaseSpec with ScalatestRouteTest with AkkaHttpSummary {
+
+  implicit val doubleEq = TolerantNumerics.tolerantDoubleEquality(200.0)
 
   val route =
-    counter {
+    summary {
       pathSingleSlash {
         get {
           complete("foo")
@@ -39,17 +42,31 @@ class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
       }
     }
 
-  "Counter metric" should provide {
-    "a counter DSL for Akka Http" which {
-      "increase the counter by 1" in {
+  "Summary metric" should provide {
+    "a summary DSL for Akka Http" which {
+      "tracks the time an endpoint consumes" in {
         assertThat(Metric.get(), is(""))
 
         Get() ~> route ~> check {
           assertThat(responseAs[String], is("foo"))
-          assertThat(Metric.get(), is("# HELP http_server_request_count A Counter for http request\n# TYPE http_server_request_count counter\nhttp_server_request_count{method=\"get\",code=\"200\",path=\"/\",} 1.0\n"))
-          Get() ~> route ~> check {
-            assertThat(Metric.get(), is("# HELP http_server_request_count A Counter for http request\n# TYPE http_server_request_count counter\nhttp_server_request_count{method=\"get\",code=\"200\",path=\"/\",} 2.0\n"))
-          }
+
+          val array = Metric.get().replace('\n', ' ').split(' ')
+
+          assert(array(15).toDouble === 0.0)
+          assert(array(17).toDouble === 0.0)
+          assert(array(19).toDouble === 0.0)
+          assert(array(23).toDouble === 0.0)
+
+          assertThat(Metric.get(), is(
+            s"""# HELP ${namespace}_$name $help
+               |# TYPE ${namespace}_$name summary
+               |${namespace}_$name{method="get",code="200",path="/",quantile="0.5",} ${array(15)}
+               |${namespace}_$name{method="get",code="200",path="/",quantile="0.9",} ${array(17)}
+               |${namespace}_$name{method="get",code="200",path="/",quantile="0.99",} ${array(19)}
+               |${namespace}_${name}_count{method="get",code="200",path="/",} 1.0
+               |${namespace}_${name}_sum{method="get",code="200",path="/",} ${array(23)}
+               |""".stripMargin
+          ))
         }
       }
     }

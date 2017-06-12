@@ -35,7 +35,7 @@ class HistogramSpec extends BaseSpec {
   val help = "help"
 
   val time = 10L
-  val timeError = 5.0
+  val timeError = 15.0
 
   implicit val doubleEq = TolerantNumerics.tolerantDoubleEquality(timeError)
 

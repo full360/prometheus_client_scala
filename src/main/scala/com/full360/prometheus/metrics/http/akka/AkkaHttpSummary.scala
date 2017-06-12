@@ -22,24 +22,28 @@
 package com.full360.prometheus.metrics.http.akka
 
 import com.full360.prometheus.Metric
-import com.full360.prometheus.metrics.http.HttpCounter
+import com.full360.prometheus.metrics.http.HttpSummary
 
 import akka.http.scaladsl.server.Directive0
 import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
 
-trait AkkaHttpCounter extends HttpCounter with AkkaHttp {
+trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
 
-  def counter: Directive0 = counterPath()
+  def summary: Directive0 = summaryPath()
 
-  def counterPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+  def summaryPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+
+    val startTime = System.currentTimeMillis()
+
     mapResponse { response ⇒
 
+      val stopTime = System.currentTimeMillis()
       val (method, code, path) = extract(uri, context, response)
 
       Metric
-        .counter(create())
+        .summary(create())
         .labels(method, code, path)
-        .inc()
+        .observe((stopTime - startTime).toDouble)
 
       response
     }
