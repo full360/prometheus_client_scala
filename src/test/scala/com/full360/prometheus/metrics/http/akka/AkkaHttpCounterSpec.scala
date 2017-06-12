@@ -46,9 +46,20 @@ class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
 
         Get() ~> route ~> check {
           assertThat(responseAs[String], is("foo"))
-          assertThat(Metric.get(), is("# HELP http_server_request_count A Counter for http request\n# TYPE http_server_request_count counter\nhttp_server_request_count{method=\"get\",code=\"200\",path=\"/\",} 1.0\n"))
+          assertThat(Metric.get(), is(
+            s"""# HELP ${namespace}_$name $help
+               |# TYPE ${namespace}_$name counter
+               |${namespace}_$name{method="get",code="200",path="/",} 1.0
+               |""".stripMargin
+          ))
+
           Get() ~> route ~> check {
-            assertThat(Metric.get(), is("# HELP http_server_request_count A Counter for http request\n# TYPE http_server_request_count counter\nhttp_server_request_count{method=\"get\",code=\"200\",path=\"/\",} 2.0\n"))
+            assertThat(Metric.get(), is(
+              s"""# HELP ${namespace}_$name $help
+                 |# TYPE ${namespace}_$name counter
+                 |${namespace}_$name{method="get",code="200",path="/",} 2.0
+                 |""".stripMargin
+            ))
           }
         }
       }
