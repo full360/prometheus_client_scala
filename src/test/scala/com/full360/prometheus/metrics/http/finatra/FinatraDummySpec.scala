@@ -19,14 +19,41 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus
+package com.full360.prometheus.metrics.http.finatra
 
-import org.scalatest.mock.MockitoSugar
-import org.scalatest.{ BeforeAndAfterEach, Matchers, WordSpecLike }
+import com.twitter.finagle.http.Request
+import com.twitter.finagle.http.Status._
+import com.twitter.finatra.http.routing.HttpRouter
+import com.twitter.finatra.http.test.EmbeddedHttpServer
+import com.twitter.finatra.http.{ Controller, HttpServer }
+import com.twitter.inject.server.FeatureTest
 
-trait BaseSpec extends WordSpecLike with BeforeAndAfterEach with MockitoSugar with Matchers {
+class FinatraDummySpec extends FeatureTest {
 
-  def provide = afterWord("provide")
+  lazy val controller = new Controller {
+    get("/") { _: Request => "foo" }
+  }
+  lazy val http = new HttpServer {
 
-  override protected def afterEach() = Metric.clearRegistry()
+    override val disableAdminHttpServer = true
+
+    override protected def configureHttp(router: HttpRouter) = {
+      router.add(controller)
+    }
+  }
+  override val server = new EmbeddedHttpServer(
+    twitterServer      = http,
+    verbose            = false,
+    disableTestLogging = true
+  )
+
+  "Server" should {
+    "Say hi" in {
+      server.httpGet(
+        path      = "/",
+        andExpect = Ok,
+        withBody  = "foo"
+      )
+    }
+  }
 }
