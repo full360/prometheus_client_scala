@@ -34,6 +34,13 @@ class AkkaHttpGaugeSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpGa
     gauge {
       pathSingleSlash {
         get {
+          assertThat(Metric.getRegistry, is(
+            s"""# HELP ${namespace}_$name $help
+               |# TYPE ${namespace}_$name gauge
+               |${namespace}_$name{method="get",path="/",} 1.0
+               |""".stripMargin
+          ))
+
           complete("foo")
         }
       }
@@ -46,8 +53,12 @@ class AkkaHttpGaugeSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpGa
 
         Get() ~> route ~> check {
           assertThat(responseAs[String], is("foo"))
-
-          println(Metric.getRegistry)
+          assertThat(Metric.getRegistry, is(
+            s"""# HELP ${namespace}_$name $help
+               |# TYPE ${namespace}_$name gauge
+               |${namespace}_$name{method="get",path="/",} 0.0
+               |""".stripMargin
+          ))
         }
       }
     }
