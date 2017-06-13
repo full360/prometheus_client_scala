@@ -23,7 +23,6 @@ package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
 
-import com.twitter.finagle.http.Status.Ok
 import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.routing.HttpRouter
 import com.twitter.finatra.http.test.EmbeddedHttpServer
@@ -42,15 +41,6 @@ abstract class FinatraBaseSpec extends FeatureTest {
   def provide = afterWord("provide")
 
   def configureHttp(router: HttpRouter): Unit
-
-  override protected def beforeEach() = {
-    super.beforeEach()
-    server.httpGet(
-      path      = "/metrics",
-      andExpect = Ok,
-      withBody  = ""
-    )
-  }
 
   override protected def afterEach() = {
     super.afterEach()

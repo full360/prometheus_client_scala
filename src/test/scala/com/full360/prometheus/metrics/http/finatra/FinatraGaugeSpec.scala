@@ -22,34 +22,38 @@
 package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
-import com.full360.prometheus.metrics.http.HttpCounter
+import com.full360.prometheus.metrics.http.HttpGauge
 
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finatra.http.routing.HttpRouter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.is
 
-class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
+class FinatraGaugeSpec extends FinatraBaseSpec with HttpGauge {
 
   override def configureHttp(router: HttpRouter) = {
     router
-      .filter[FinatraCounter]
+      .filter[FinatraGauge]
       .add[FinatraMetric]
   }
 
   "Finatra" should provide {
-    "a counter filter" which {
-      "increase by 1" in {
+    "a gauge filter" which {
+      "increase and decrease by 1" in {
+
         server.httpGet(
           path      = "/metrics",
           andExpect = Ok,
-          withBody  = ""
+          withBody  =
+            s"""# HELP ${namespace}_$name $help
+               |# TYPE ${namespace}_$name gauge
+               |${namespace}_$name{method="get",path="/metrics",} 1.0
+               |""".stripMargin
         )
-
         assertThat(Metric.getRegistry, is(
           s"""# HELP ${namespace}_$name $help
-             |# TYPE ${namespace}_$name counter
-             |${namespace}_$name{method="get",code="200",path="/metrics",} 1.0
+             |# TYPE ${namespace}_$name gauge
+             |${namespace}_$name{method="get",path="/metrics",} 0.0
              |""".stripMargin
         ))
       }

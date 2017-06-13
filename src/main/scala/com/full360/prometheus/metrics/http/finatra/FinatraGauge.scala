@@ -22,37 +22,22 @@
 package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
-import com.full360.prometheus.metrics.http.HttpCounter
+import com.full360.prometheus.metrics.http.HttpGauge
 
-import com.twitter.finagle.http.Status.Ok
-import com.twitter.finatra.http.routing.HttpRouter
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.is
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
 
-class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
+class FinatraGauge extends SimpleFilter[Request, Response] with HttpGauge with Finatra {
 
-  override def configureHttp(router: HttpRouter) = {
-    router
-      .filter[FinatraCounter]
-      .add[FinatraMetric]
-  }
+  override def apply(request: Request, service: Service[Request, Response]) = {
 
-  "Finatra" should provide {
-    "a counter filter" which {
-      "increase by 1" in {
-        server.httpGet(
-          path      = "/metrics",
-          andExpect = Ok,
-          withBody  = ""
-        )
+    val (method, path, _) = extract(request, None)
+    val gauge = Metric.gauge(create()).labels(method, path)
 
-        assertThat(Metric.getRegistry, is(
-          s"""# HELP ${namespace}_$name $help
-             |# TYPE ${namespace}_$name counter
-             |${namespace}_$name{method="get",code="200",path="/metrics",} 1.0
-             |""".stripMargin
-        ))
-      }
-    }
+    gauge.inc()
+
+    service(request)
+      .onSuccess(_ => gauge.dec())
+      .onFailure(_ => gauge.dec())
   }
 }
