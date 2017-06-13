@@ -19,16 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metrics.http
+package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpHistogram
 
-trait HttpHistogram {
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
 
-  val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "An histogram for http response in milliseconds"
-  val labels = Map("method" -> "", "path" -> "")
+class FinatraHistogram extends SimpleFilter[Request, Response] with HttpHistogram with Finatra {
 
-  def create() = Metric(name, help, labels, namespace)
+  override def apply(request: Request, service: Service[Request, Response]) = {
+
+    val startTime = System.currentTimeMillis()
+
+    def observe[A](result: A) = {
+
+      val stopTime = System.currentTimeMillis()
+      val (method, path, _) = extract(request, None)
+
+      Metric
+        .histogram(create())
+        .labels(method, path)
+        .observe((stopTime - startTime).toDouble)
+    }
+
+    service(request)
+      .onSuccess(observe)
+      .onFailure(observe)
+  }
 }

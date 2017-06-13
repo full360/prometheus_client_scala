@@ -43,7 +43,7 @@ class AkkaHttpHistogramSpec extends BaseSpec with ScalatestRouteTest with AkkaHt
     }
 
   "Histogram metric" should provide {
-    "a histogram DSL for Akka Http" which {
+    "an histogram DSL for Akka Http" which {
       "tracks the time an endpoint consumes" in {
         assertThat(Metric.getRegistry, is(""))
 

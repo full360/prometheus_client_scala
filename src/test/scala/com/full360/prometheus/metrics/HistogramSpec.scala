@@ -49,7 +49,7 @@ class HistogramSpec extends BaseSpec {
   def baz(a: Int, b: Int): Int = a + b
 
   "Histogram metric" should provide {
-    "a histogram annotation" which {
+    "an histogram annotation" which {
       "tracks the time a piece code consumes" in {
         assertThat(Metric.getRegistry, is(""))
 
