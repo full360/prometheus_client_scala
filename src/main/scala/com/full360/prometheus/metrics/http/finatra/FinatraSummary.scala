@@ -22,37 +22,33 @@
 package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
-import com.full360.prometheus.metrics.http.HttpCounter
+import com.full360.prometheus.metrics.http.HttpSummary
 
-import com.twitter.finagle.http.Status.Ok
-import com.twitter.finatra.http.routing.HttpRouter
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.is
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
 
-class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
+class FinatraSummary extends SimpleFilter[Request, Response] with HttpSummary with Finatra {
 
-  override def configureHttp(router: HttpRouter) = {
-    router
-      .filter[FinatraCounter]
-      .add[FinatraMetric]
-  }
+  override def apply(request: Request, service: Service[Request, Response]) = {
 
-  "Counter metric" should provide {
-    "a counter filter for Finatra" which {
-      "increase by 1" in {
-        server.httpGet(
-          path      = "/metrics",
-          andExpect = Ok,
-          withBody  = ""
-        )
+    val startTime = System.currentTimeMillis()
 
-        assertThat(Metric.getRegistry, is(
-          s"""# HELP ${namespace}_$name $help
-             |# TYPE ${namespace}_$name counter
-             |${namespace}_$name{method="get",code="200",path="/metrics",} 1.0
-             |""".stripMargin
-        ))
+    def observe[A](result: A) = {
+
+      val stopTime = System.currentTimeMillis()
+      val (method, path, code) = result match {
+        case response: Response => extract(request, Some(response))
+        case _                  => extract(request, None)
       }
+
+      Metric
+        .summary(create())
+        .labels(method, code.getOrElse("500"), path)
+        .observe((stopTime - startTime).toDouble)
     }
+
+    service(request)
+      .onSuccess(observe)
+      .onFailure(observe)
   }
 }

@@ -22,34 +22,48 @@
 package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
-import com.full360.prometheus.metrics.http.HttpCounter
+import com.full360.prometheus.metrics.http.HttpSummary
 
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finatra.http.routing.HttpRouter
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.is
+import org.scalactic.TolerantNumerics
 
-class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
+class FinatraSummarySpec extends FinatraBaseSpec with HttpSummary {
+
+  implicit val doubleEq = TolerantNumerics.tolerantDoubleEquality(200.0)
 
   override def configureHttp(router: HttpRouter) = {
     router
-      .filter[FinatraCounter]
+      .filter[FinatraSummary]
       .add[FinatraMetric]
   }
 
-  "Counter metric" should provide {
-    "a counter filter for Finatra" which {
-      "increase by 1" in {
+  "Summary metric" should provide {
+    "a summary filter for Finatra" which {
+      "tracks the time an endpoint consumes" in {
         server.httpGet(
           path      = "/metrics",
           andExpect = Ok,
           withBody  = ""
         )
 
+        val array = Metric.getRegistry.replace('\n', ' ').split(' ')
+
+        assert(array(15).toDouble === 0.0)
+        assert(array(17).toDouble === 0.0)
+        assert(array(19).toDouble === 0.0)
+        assert(array(23).toDouble === 0.0)
+
         assertThat(Metric.getRegistry, is(
           s"""# HELP ${namespace}_$name $help
-             |# TYPE ${namespace}_$name counter
-             |${namespace}_$name{method="get",code="200",path="/metrics",} 1.0
+             |# TYPE ${namespace}_$name summary
+             |${namespace}_$name{method="get",code="200",path="/metrics",quantile="0.5",} ${array(15)}
+             |${namespace}_$name{method="get",code="200",path="/metrics",quantile="0.9",} ${array(17)}
+             |${namespace}_$name{method="get",code="200",path="/metrics",quantile="0.99",} ${array(19)}
+             |${namespace}_${name}_count{method="get",code="200",path="/metrics",} 1.0
+             |${namespace}_${name}_sum{method="get",code="200",path="/metrics",} ${array(23)}
              |""".stripMargin
         ))
       }

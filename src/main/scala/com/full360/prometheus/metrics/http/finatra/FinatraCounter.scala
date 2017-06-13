@@ -42,6 +42,6 @@ class FinatraCounter extends SimpleFilter[Request, Response] with HttpCounter wi
 
     service(request)
       .onSuccess(response => inc(extract(request, Some(response))))
-      .onFailure { _ => inc(extract(request, None)) }
+      .onFailure(_ => inc(extract(request, None)))
   }
 }

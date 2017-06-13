@@ -37,8 +37,8 @@ class FinatraGaugeSpec extends FinatraBaseSpec with HttpGauge {
       .add[FinatraMetric]
   }
 
-  "Finatra" should provide {
-    "a gauge filter" which {
+  "Gauge metric" should provide {
+    "a gauge filter for Finatra" which {
       "increase and decrease by 1" in {
 
         server.httpGet(
