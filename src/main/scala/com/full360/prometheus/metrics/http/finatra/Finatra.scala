@@ -19,16 +19,22 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metrics.http
+package com.full360.prometheus.metrics.http.finatra
 
-import com.full360.prometheus.Metric
+import com.twitter.finagle.http.{ Request, Response }
 
-trait HttpHistogram {
+trait Finatra {
 
-  val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "A histogram for http response in milliseconds"
-  val labels = Map("method" -> "", "path" -> "")
+  def extract(request: Request, response: Option[Response] = None) = {
+    val method = request.method.toString().toLowerCase
+    val code = response.map(_.getStatusCode().toString)
+    val path = request.params match {
+      case params if params.isEmpty => request.uri
+      case params => params.foldLeft(request.uri) { (path, param) =>
+        path.replaceFirst(s"/${param._2}", s"/:${param._1}")
+      }
+    }
 
-  def create() = Metric(name, help, labels, namespace)
+    (method, path, code)
+  }
 }

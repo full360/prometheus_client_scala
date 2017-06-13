@@ -21,28 +21,27 @@
 
 package com.full360.prometheus.metrics.http.finatra
 
+import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpCounter
+
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
-import com.twitter.util.Future
 
-class FinatraDummyFilter extends SimpleFilter[Request, Response] {
+class FinatraCounter extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
 
-  override def apply(request: Request, service: Service[Request, Response]): Future[Response] = {
+  override def apply(request: Request, service: Service[Request, Response]) = {
 
-    val path = request.params match {
-      case params if params.isEmpty => request.uri
-      case params                   => params.foldLeft(request.uri) { (path, param) =>
-        path.replaceFirst(s"/${param._2}", s"/:${param._1}")
-      }
+    def inc(params: (String, String, Option[String])) = {
+      val (method, path, code) = params
+
+      Metric
+        .counter(create())
+        .labels(method, code.getOrElse("500"), path)
+        .inc()
     }
 
-    println(path)
-
     service(request)
-      .onSuccess(response ⇒ register(request, Some(response)))
-      .onFailure(_ ⇒ register(request))
-  }
-
-  def register(request: Request, response: Option[Response] = None) = {
+      .onSuccess(response => inc(extract(request, Some(response))))
+      .onFailure { _ => inc(extract(request, None)) }
   }
 }

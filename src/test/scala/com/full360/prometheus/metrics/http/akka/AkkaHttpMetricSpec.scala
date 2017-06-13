@@ -28,7 +28,7 @@ import akka.http.scaladsl.testkit.ScalatestRouteTest
 
 class AkkaHttpMetricSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpMetric {
 
-  "Metric" should provide {
+  "Akka Http" should provide {
     "an endpoint" which {
       "expose the metric registry" in {
 

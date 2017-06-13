@@ -40,10 +40,11 @@ object Dependencies {
     "org.specs2"          %% "specs2"                   % "2.3.12"  % "test",
 
     // Akka Http
-    "com.typesafe.akka"   %% "akka-http-testkit"        % "10.0.5" % "test",
     "com.typesafe.akka"   %% "akka-http"                % "10.0.5" % "provided",
+    "com.typesafe.akka"   %% "akka-http-testkit"        % "10.0.5" % "test",
 
     // Finatra
+    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "provided",
     "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "test",
     "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "test" classifier "tests",
     "com.twitter.inject"  %% "inject-server"            % "2.1.6" % "test",

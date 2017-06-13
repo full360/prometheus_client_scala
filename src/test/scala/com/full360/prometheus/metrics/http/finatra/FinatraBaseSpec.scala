@@ -19,16 +19,41 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metrics.http
+package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
 
-trait HttpHistogram {
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finatra.http.HttpServer
+import com.twitter.finatra.http.routing.HttpRouter
+import com.twitter.finatra.http.test.EmbeddedHttpServer
+import com.twitter.inject.server.FeatureTest
 
-  val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "A histogram for http response in milliseconds"
-  val labels = Map("method" -> "", "path" -> "")
+abstract class FinatraBaseSpec extends FeatureTest {
 
-  def create() = Metric(name, help, labels, namespace)
+  override val server = new EmbeddedHttpServer(
+    verbose            = false,
+    disableTestLogging = true,
+    twitterServer      = new HttpServer {
+    override protected def configureHttp(router: HttpRouter) = FinatraBaseSpec.this.configureHttp(router)
+  }
+  )
+
+  def provide = afterWord("provide")
+
+  def configureHttp(router: HttpRouter): Unit
+
+  override protected def beforeEach() = {
+    super.beforeEach()
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  = ""
+    )
+  }
+
+  override protected def afterEach() = {
+    super.afterEach()
+    Metric.clearRegistry()
+  }
 }

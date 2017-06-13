@@ -21,43 +21,12 @@
 
 package com.full360.prometheus.metrics.http.finatra
 
+import com.full360.prometheus.Metric
+
 import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Status._
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.http.test.EmbeddedHttpServer
-import com.twitter.finatra.http.{ Controller, HttpServer }
-import com.twitter.inject.server.FeatureTest
+import com.twitter.finatra.http.Controller
 
-class FinatraDummySpec extends FeatureTest {
+class FinatraMetric extends Controller {
 
-  lazy val controller = new Controller {
-    get("/character/:character/ability/:ability") { request: Request =>
-      s"${request.params("character")} used ${request.params("ability")}!"
-    }
-  }
-  lazy val http = new HttpServer {
-
-    override val disableAdminHttpServer = true
-
-    override protected def configureHttp(router: HttpRouter) = {
-      router
-        .filter[FinatraDummyFilter]
-        .add(controller)
-    }
-  }
-  override val server = new EmbeddedHttpServer(
-    twitterServer      = http,
-    verbose            = false,
-    disableTestLogging = true
-  )
-
-  "Server" should {
-    "Say hi" in {
-      server.httpGet(
-        path      = "/character/Itachi/ability/Amaterasu",
-        andExpect = Ok,
-        withBody  = "Itachi used Amaterasu!"
-      )
-    }
-  }
+  get("/metrics") { _: Request ⇒ Metric.getRegistry }
 }

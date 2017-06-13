@@ -19,16 +19,35 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.metrics.http
+package com.full360.prometheus.metrics.http.finatra
 
-import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpCounter
 
-trait HttpHistogram {
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finatra.http.routing.HttpRouter
 
-  val namespace = "http_server"
-  val name = "request_duration_milliseconds"
-  val help = "A histogram for http response in milliseconds"
-  val labels = Map("method" -> "", "path" -> "")
+class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
 
-  def create() = Metric(name, help, labels, namespace)
+  override def configureHttp(router: HttpRouter) = {
+    router
+      .filter[FinatraCounter]
+      .add[FinatraMetric]
+  }
+
+  "Finatra" should provide {
+    "an endpoint" which {
+      "expose the metric registry" in {
+
+        server.httpGet(
+          path      = "/metrics",
+          andExpect = Ok,
+          withBody  =
+            s"""# HELP ${namespace}_$name $help
+               |# TYPE ${namespace}_$name counter
+               |${namespace}_$name{method="get",code="200",path="/metrics",} 1.0
+               |""".stripMargin
+        )
+      }
+    }
+  }
 }
