@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import scalariform.formatter.preferences.{ AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
+import scalariform.formatter.preferences.{ AlignArguments, AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
 
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
@@ -32,7 +32,7 @@ object Settings {
   private lazy val base = Seq(
     name := "prometheus-client-scala",
     organization := "com.full360",
-    version := "0.3-SNAPSHOT",
+    version := "0.5-SNAPSHOT",
     licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
     scalaVersion := "2.11.8",
@@ -55,7 +55,10 @@ object Settings {
       "-Ywarn-numeric-widen",
       "-Ywarn-unused-import"
     ),
-    shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " }
+    shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " },
+    parallelExecution in Test := false,
+
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
   )
 
   private lazy val assemble = Seq(
@@ -66,9 +69,10 @@ object Settings {
   private lazy val format = {
 
     val preferences = FormattingPreferences()
-      .setPreference(RewriteArrowSymbols, true)
-      .setPreference(AlignParameters, true)
       .setPreference(AlignSingleLineCaseStatements, true)
+      .setPreference(AlignParameters, true)
+      .setPreference(AlignArguments, true)
+      .setPreference(RewriteArrowSymbols, false)
       .setPreference(DoubleIndentClassDeclaration, true)
       .setPreference(SpacesAroundMultiImports, true)
 

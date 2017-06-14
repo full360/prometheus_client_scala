@@ -19,17 +19,29 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpCounter
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
+
+class FinatraCounter extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
+
+  override def apply(request: Request, service: Service[Request, Response]) = {
+
+    def inc(params: (String, String, Option[String])) = {
+      val (method, path, code) = params
+
+      Metric
+        .counter(create())
+        .labels(method, code.getOrElse("500"), path)
+        .inc()
+    }
+
+    service(request)
+      .onSuccess(response => inc(extract(request, Some(response))))
+      .onFailure(_ => inc(extract(request, None)))
+  }
 }

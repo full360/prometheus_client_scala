@@ -19,17 +19,14 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.Metric
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+import com.twitter.finagle.http.Request
+import com.twitter.finatra.http.Controller
+
+class FinatraMetric extends Controller {
+
+  get("/metrics") { _: Request ⇒ Metric.getRegistry }
 }

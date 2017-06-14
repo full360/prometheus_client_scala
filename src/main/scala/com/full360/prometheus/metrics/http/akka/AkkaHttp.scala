@@ -19,17 +19,27 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.akka
 
-object Resolvers {
+import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.server.RequestContext
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+trait AkkaHttp {
+
+  def extract(uri: String, context: RequestContext, response: HttpResponse): (String, String, String) = {
+    val (method, path) = extract(uri, context)
+    val code = response.status.intValue().toString
+
+    (method, code, path)
+  }
+
+  def extract(uri: String, context: RequestContext): (String, String) = {
+    val path = uri match {
+      case ""    => context.request.uri.path.toString()
+      case value => value
+    }
+    val method = context.request.method.value.toLowerCase
+
+    (method, path)
+  }
 }

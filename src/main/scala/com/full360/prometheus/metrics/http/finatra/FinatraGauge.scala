@@ -19,17 +19,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpGauge
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
+
+class FinatraGauge extends SimpleFilter[Request, Response] with HttpGauge with Finatra {
+
+  override def apply(request: Request, service: Service[Request, Response]) = {
+
+    val (method, path, _) = extract(request, None)
+    val gauge = Metric.gauge(create()).labels(method, path)
+
+    gauge.inc()
+
+    service(request)
+      .onSuccess(_ => gauge.dec())
+      .onFailure(_ => gauge.dec())
+  }
 }

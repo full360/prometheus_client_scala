@@ -19,17 +19,24 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.finatra
 
-object Resolvers {
+import com.twitter.finagle.http.{ Request, Response }
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+trait Finatra {
+
+  def extract(request: Request, response: Option[Response] = None) = {
+    val method = request.method.toString().toLowerCase
+    val code = response.map(_.getStatusCode().toString)
+    val path = request.params match {
+      case params if params.isEmpty => request.uri
+      case params                   => params.foldLeft(request.uri) { (path, param) =>
+        path
+          .replaceFirst(s"/${param._2}", s"/:${param._1}")
+          .takeWhile(char => !char.equals('?'))
+      }
+    }
+
+    (method, path, code)
+  }
 }

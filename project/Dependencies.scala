@@ -26,14 +26,37 @@ object Dependencies {
 
   // @formatter:off
   def apply() = Seq(libraryDependencies ++= Seq(
-      "io.prometheus"      % "simpleclient"             % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_hotspot"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_servlet"     % "0.0.21" % "compile",
-      "io.prometheus"      % "simpleclient_pushgateway" % "0.0.21" % "compile",
-      "com.twitter"       %% "finatra-http"             % "2.2.0"  % "provided",
-      "com.typesafe.akka" %% "akka-http"                % "10.0.5" % "provided",
-      "org.scalatest"     %% "scalatest"                % "3.0.1"  % "test",
-      "org.mockito"        % "mockito-core"             % "2.7.19" % "test"
+    // Core
+    "io.prometheus"        % "simpleclient"             % "0.0.21"  % "compile",
+    "io.prometheus"        % "simpleclient_hotspot"     % "0.0.21"  % "compile",
+    "io.prometheus"        % "simpleclient_servlet"     % "0.0.21"  % "compile",
+    "io.prometheus"        % "simpleclient_pushgateway" % "0.0.21"  % "compile",
+    "org.scala-lang"       % "scala-reflect"            % "2.11.8"  % "compile",
+
+    // Test
+    "org.scalatest"       %% "scalatest"                % "2.2.3"   % "test",
+    "org.mockito"          % "mockito-core"             % "1.9.5"   % "test",
+    "org.hamcrest"         % "hamcrest-all"             % "1.3"     % "test",
+    "org.specs2"          %% "specs2"                   % "2.3.12"  % "test",
+
+    // Akka Http
+    "com.typesafe.akka"   %% "akka-http"                % "10.0.5" % "provided",
+    "com.typesafe.akka"   %% "akka-http-testkit"        % "10.0.5" % "test",
+
+    // Finatra
+    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "provided",
+    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "test",
+    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "test" classifier "tests",
+    "com.twitter.inject"  %% "inject-server"            % "2.1.6" % "test",
+    "com.twitter.inject"  %% "inject-server"            % "2.1.6" % "test" classifier "tests",
+    "com.twitter.inject"  %% "inject-app"               % "2.1.6" % "test",
+    "com.twitter.inject"  %% "inject-app"               % "2.1.6" % "test" classifier "tests",
+    "com.twitter.inject"  %% "inject-core"              % "2.1.6" % "test",
+    "com.twitter.inject"  %% "inject-core"              % "2.1.6" % "test" classifier "tests",
+    "com.twitter.inject"  %% "inject-modules"           % "2.1.6" % "test",
+    "com.twitter.inject"  %% "inject-modules"           % "2.1.6" % "test" classifier "tests",
+
+    "com.google.inject.extensions" % "guice-testlib"    % "4.0"   % "test"
   ))
   // @formatter:on
 }

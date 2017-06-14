@@ -19,17 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpHistogram
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
+
+class FinatraHistogram extends SimpleFilter[Request, Response] with HttpHistogram with Finatra {
+
+  override def apply(request: Request, service: Service[Request, Response]) = {
+
+    val startTime = System.currentTimeMillis()
+
+    def observe[A](result: A) = {
+
+      val stopTime = System.currentTimeMillis()
+      val (method, path, _) = extract(request, None)
+
+      Metric
+        .histogram(create())
+        .labels(method, path)
+        .observe((stopTime - startTime).toDouble)
+    }
+
+    service(request)
+      .onSuccess(observe)
+      .onFailure(observe)
+  }
 }

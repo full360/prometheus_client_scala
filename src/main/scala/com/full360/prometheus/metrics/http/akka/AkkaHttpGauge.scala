@@ -19,17 +19,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
-import sbt._
+package com.full360.prometheus.metrics.http.akka
 
-object Resolvers {
+import com.full360.prometheus.Metric
+import com.full360.prometheus.metrics.http.HttpGauge
 
-  def apply() = Seq(resolvers := Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  ))
+import akka.http.scaladsl.server.Directive0
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+
+trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
+
+  def gauge: Directive0 = gaugePath()
+
+  def gaugePath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+    val (method, path) = extract(uri, context)
+
+    val gauge = Metric
+      .gauge(create())
+      .labels(method, path)
+
+    gauge.inc()
+
+    mapResponse { response ⇒
+      gauge.dec()
+      response
+    }
+  }
 }
