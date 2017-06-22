@@ -24,10 +24,14 @@ package com.full360.prometheus.metrics.http.finatra
 import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpSummary
 
+import javax.inject.{ Inject, Singleton }
+
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
+import com.twitter.finatra.http.internal.exceptions.ExceptionManager
 
-class FinatraSummary extends SimpleFilter[Request, Response] with HttpSummary with Finatra {
+@Singleton
+class FinatraSummary @Inject()(exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpSummary with Finatra {
 
   override def apply(request: Request, service: Service[Request, Response]) = {
 
@@ -37,8 +41,9 @@ class FinatraSummary extends SimpleFilter[Request, Response] with HttpSummary wi
 
       val stopTime = System.currentTimeMillis()
       val (method, path, code) = result match {
-        case response: Response => extract(request, Some(response))
-        case _                  => extract(request, None)
+        case response: Response   => extract(request, Some(response))
+        case throwable: Throwable => extract(request, Some(exceptionManager.toResponse(request, throwable)))
+        case _                    => extract(request, None)
       }
 
       Metric

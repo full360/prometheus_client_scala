@@ -24,10 +24,14 @@ package com.full360.prometheus.metrics.http.finatra
 import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpCounter
 
+import javax.inject.{ Inject, Singleton }
+
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
+import com.twitter.finatra.http.internal.exceptions.ExceptionManager
 
-class FinatraCounter extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
+@Singleton
+class FinatraCounter @Inject()(exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
 
   override def apply(request: Request, service: Service[Request, Response]) = {
 
@@ -42,6 +46,6 @@ class FinatraCounter extends SimpleFilter[Request, Response] with HttpCounter wi
 
     service(request)
       .onSuccess(response => inc(extract(request, Some(response))))
-      .onFailure(_ => inc(extract(request, None)))
+      .onFailure(throwable => inc(extract(request, Some(exceptionManager.toResponse(request, throwable)))))
   }
 }
