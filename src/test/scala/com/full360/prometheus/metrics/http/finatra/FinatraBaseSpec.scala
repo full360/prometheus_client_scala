@@ -23,9 +23,8 @@ package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
 
-import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.http.test.EmbeddedHttpServer
+import com.twitter.finatra.http.{ EmbeddedHttpServer, HttpServer }
 import com.twitter.inject.server.FeatureTest
 
 abstract class FinatraBaseSpec extends FeatureTest {

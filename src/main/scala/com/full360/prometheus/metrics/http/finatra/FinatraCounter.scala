@@ -28,10 +28,10 @@ import javax.inject.{ Inject, Singleton }
 
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
-import com.twitter.finatra.http.internal.exceptions.ExceptionManager
+import com.twitter.finatra.http.exceptions.ExceptionManager
 
 @Singleton
-class FinatraCounter @Inject()(exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
+class FinatraCounter @Inject() (exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
 
   override def apply(request: Request, service: Service[Request, Response]) = {
 

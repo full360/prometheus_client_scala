@@ -44,17 +44,17 @@ object Dependencies {
     "com.typesafe.akka"   %% "akka-http-testkit"        % "10.0.5" % "test",
 
     // Finatra
-    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "provided",
-    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "test",
-    "com.twitter.finatra" %% "finatra-http"             % "2.1.6" % "test" classifier "tests",
-    "com.twitter.inject"  %% "inject-server"            % "2.1.6" % "test",
-    "com.twitter.inject"  %% "inject-server"            % "2.1.6" % "test" classifier "tests",
-    "com.twitter.inject"  %% "inject-app"               % "2.1.6" % "test",
-    "com.twitter.inject"  %% "inject-app"               % "2.1.6" % "test" classifier "tests",
-    "com.twitter.inject"  %% "inject-core"              % "2.1.6" % "test",
-    "com.twitter.inject"  %% "inject-core"              % "2.1.6" % "test" classifier "tests",
-    "com.twitter.inject"  %% "inject-modules"           % "2.1.6" % "test",
-    "com.twitter.inject"  %% "inject-modules"           % "2.1.6" % "test" classifier "tests",
+    "com.twitter"         %% "finatra-http"             % "2.5.0" % "provided",
+    "com.twitter"         %% "finatra-http"             % "2.5.0" % "test",
+    "com.twitter"         %% "finatra-http"             % "2.5.0" % "test" classifier "tests",
+    "com.twitter"         %% "inject-server"            % "2.5.0" % "test",
+    "com.twitter"         %% "inject-server"            % "2.5.0" % "test" classifier "tests",
+    "com.twitter"         %% "inject-app"               % "2.5.0" % "test",
+    "com.twitter"         %% "inject-app"               % "2.5.0" % "test" classifier "tests",
+    "com.twitter"         %% "inject-core"              % "2.5.0" % "test",
+    "com.twitter"         %% "inject-core"              % "2.5.0" % "test" classifier "tests",
+    "com.twitter"         %% "inject-modules"           % "2.5.0" % "test",
+    "com.twitter"         %% "inject-modules"           % "2.5.0" % "test" classifier "tests",
 
     "com.google.inject.extensions" % "guice-testlib"    % "4.0"   % "test"
   ))

@@ -30,7 +30,7 @@ trait Finatra {
     val code = response.map(_.getStatusCode().toString)
     val path = request.params match {
       case params if params.isEmpty => request.uri
-      case params                   => params.foldLeft(request.uri) { (path, param) =>
+      case params => params.foldLeft(request.uri) { (path, param) =>
         path
           .replaceFirst(s"/${param._2}", s"/:${param._1}")
           .takeWhile(char => !char.equals('?'))
