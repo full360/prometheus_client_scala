@@ -32,7 +32,7 @@ trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
   def summary: Directive0 = summaryPath()
 
   def summaryPath(uri: String = ""): Directive0 =
-    handleExceptions(exceptionHandler) & extractRequestContext.flatMap { context ⇒
+    extractRequestContext.flatMap { context ⇒
 
       val startTime = System.currentTimeMillis()
 
@@ -48,5 +48,5 @@ trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
 
         response
       }
-    }
+    } & handleExceptions(exceptionHandler(uri))
 }

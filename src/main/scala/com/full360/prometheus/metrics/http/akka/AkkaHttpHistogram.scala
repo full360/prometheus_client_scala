@@ -32,7 +32,7 @@ trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
   def histogram: Directive0 = histogramPath()
 
   def histogramPath(uri: String = ""): Directive0 =
-    handleExceptions(exceptionHandler) & extractRequestContext.flatMap { context ⇒
+    extractRequestContext.flatMap { context ⇒
 
       val startTime = System.currentTimeMillis()
 
@@ -48,5 +48,5 @@ trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
 
         response
       }
-    }
+    } & handleExceptions(exceptionHandler(uri))
 }

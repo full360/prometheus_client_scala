@@ -32,7 +32,7 @@ trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
   def gauge: Directive0 = gaugePath()
 
   def gaugePath(uri: String = ""): Directive0 =
-    handleExceptions(exceptionHandler) & extractRequestContext.flatMap { context ⇒
+    extractRequestContext.flatMap { context ⇒
       val (method, path) = extract(uri, context)
 
       val gauge = Metric
@@ -45,5 +45,5 @@ trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
         gauge.dec()
         response
       }
-    }
+    } & handleExceptions(exceptionHandler(uri))
 }
