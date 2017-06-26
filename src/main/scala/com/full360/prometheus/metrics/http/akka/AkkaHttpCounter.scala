@@ -25,23 +25,24 @@ import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpCounter
 
 import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
 trait AkkaHttpCounter extends HttpCounter with AkkaHttp {
 
   def counter: Directive0 = counterPath()
 
-  def counterPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
-    mapResponse { response ⇒
+  def counterPath(uri: String = ""): Directive0 =
+    handleExceptions(exceptionHandler) & extractRequestContext.flatMap { context ⇒
+      mapResponse { response ⇒
 
-      val (method, code, path) = extract(uri, context, response)
+        val (method, code, path) = extract(uri, context, response)
 
-      Metric
-        .counter(create())
-        .labels(method, code, path)
-        .inc()
+        Metric
+          .counter(create())
+          .labels(method, code, path)
+          .inc()
 
-      response
+        response
+      }
     }
-  }
 }

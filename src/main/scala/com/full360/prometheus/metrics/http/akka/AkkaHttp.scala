@@ -22,7 +22,8 @@
 package com.full360.prometheus.metrics.http.akka
 
 import akka.http.scaladsl.model.HttpResponse
-import akka.http.scaladsl.server.RequestContext
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.{ ExceptionHandler, RequestContext }
 
 trait AkkaHttp {
 
@@ -41,5 +42,11 @@ trait AkkaHttp {
     val method = context.request.method.value.toLowerCase
 
     (method, path)
+  }
+
+  def exceptionHandler = ExceptionHandler {
+    case throwable: Throwable => extractRequest { request ⇒
+      throw throwable
+    }
   }
 }

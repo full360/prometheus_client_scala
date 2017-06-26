@@ -25,27 +25,28 @@ import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpSummary
 
 import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
 trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
 
   def summary: Directive0 = summaryPath()
 
-  def summaryPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+  def summaryPath(uri: String = ""): Directive0 =
+    handleExceptions(exceptionHandler) & extractRequestContext.flatMap { context ⇒
 
-    val startTime = System.currentTimeMillis()
+      val startTime = System.currentTimeMillis()
 
-    mapResponse { response ⇒
+      mapResponse { response ⇒
 
-      val stopTime = System.currentTimeMillis()
-      val (method, code, path) = extract(uri, context, response)
+        val stopTime = System.currentTimeMillis()
+        val (method, code, path) = extract(uri, context, response)
 
-      Metric
-        .summary(create())
-        .labels(method, code, path)
-        .observe((stopTime - startTime).toDouble)
+        Metric
+          .summary(create())
+          .labels(method, code, path)
+          .observe((stopTime - startTime).toDouble)
 
-      response
+        response
+      }
     }
-  }
 }
