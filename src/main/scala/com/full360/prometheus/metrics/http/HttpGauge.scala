@@ -25,10 +25,10 @@ import com.full360.prometheus.Metric
 
 trait HttpGauge {
 
-  val namespace = "http_server"
-  val name = "request_gauge"
-  val help = "A gauge for http request"
-  val labels = Map("method" -> "", "path" -> "")
+  val gaugeNamespace = "http_server"
+  val gaugeName = "request_gauge"
+  val gaugeHelp = "A gauge for http request"
+  val gaugeLabels = Map("method" -> "", "path" -> "")
 
-  def create() = Metric(name, help, labels, namespace)
+  def createGaugeMetric() = Metric(gaugeName, gaugeHelp, gaugeLabels, gaugeNamespace)
 }

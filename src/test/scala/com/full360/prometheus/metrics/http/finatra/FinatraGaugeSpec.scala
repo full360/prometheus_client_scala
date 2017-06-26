@@ -45,15 +45,15 @@ class FinatraGaugeSpec extends FinatraBaseSpec with HttpGauge {
           path      = "/metrics",
           andExpect = Ok,
           withBody  =
-            s"""# HELP ${namespace}_$name $help
-               |# TYPE ${namespace}_$name gauge
-               |${namespace}_$name{method="get",path="/metrics",} 1.0
+            s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
+               |# TYPE ${gaugeNamespace}_$gaugeName gauge
+               |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 1.0
                |""".stripMargin
         )
         assertThat(Metric.getRegistry, is(
-          s"""# HELP ${namespace}_$name $help
-             |# TYPE ${namespace}_$name gauge
-             |${namespace}_$name{method="get",path="/metrics",} 0.0
+          s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
+             |# TYPE ${gaugeNamespace}_$gaugeName gauge
+             |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 0.0
              |""".stripMargin
         ))
       }

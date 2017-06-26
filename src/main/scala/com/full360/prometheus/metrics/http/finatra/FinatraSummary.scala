@@ -47,7 +47,7 @@ class FinatraSummary @Inject() (exceptionManager: ExceptionManager) extends Simp
       }
 
       Metric
-        .summary(create())
+        .summary(createSummaryMetric())
         .labels(method, code.getOrElse("500"), path)
         .observe((stopTime - startTime).toDouble)
     }

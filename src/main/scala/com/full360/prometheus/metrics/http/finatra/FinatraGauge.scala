@@ -32,7 +32,7 @@ class FinatraGauge extends SimpleFilter[Request, Response] with HttpGauge with F
   override def apply(request: Request, service: Service[Request, Response]) = {
 
     val (method, path, _) = extract(request, None)
-    val gauge = Metric.gauge(create()).labels(method, path)
+    val gauge = Metric.gauge(createGaugeMetric()).labels(method, path)
 
     gauge.inc()
 

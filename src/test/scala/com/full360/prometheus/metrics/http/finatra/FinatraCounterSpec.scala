@@ -47,9 +47,9 @@ class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
         )
 
         assertThat(Metric.getRegistry, is(
-          s"""# HELP ${namespace}_$name $help
-             |# TYPE ${namespace}_$name counter
-             |${namespace}_$name{method="get",code="200",path="/metrics",} 1.0
+          s"""# HELP ${counterNamespace}_$counterName $counterHelp
+             |# TYPE ${counterNamespace}_$counterName counter
+             |${counterNamespace}_$counterName{method="get",code="200",path="/metrics",} 1.0
              |""".stripMargin
         ))
       }

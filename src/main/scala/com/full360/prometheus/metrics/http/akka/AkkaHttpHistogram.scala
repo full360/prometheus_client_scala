@@ -42,7 +42,7 @@ trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
         val (method, path) = extract(uri, context)
 
         Metric
-          .histogram(create())
+          .histogram(createHistogramMetric())
           .labels(method, path)
           .observe((stopTime - startTime).toDouble)
 

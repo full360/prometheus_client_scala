@@ -42,7 +42,7 @@ trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
         val (method, code, path) = extract(uri, context, response)
 
         Metric
-          .summary(create())
+          .summary(createSummaryMetric())
           .labels(method, code, path)
           .observe((stopTime - startTime).toDouble)
 

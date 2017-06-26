@@ -39,7 +39,7 @@ class FinatraCounter @Inject() (exceptionManager: ExceptionManager) extends Simp
       val (method, path, code) = params
 
       Metric
-        .counter(create())
+        .counter(createCounterMetric())
         .labels(method, code.getOrElse("500"), path)
         .inc()
     }

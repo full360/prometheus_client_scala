@@ -39,7 +39,7 @@ trait AkkaHttpCounter extends HttpCounter with AkkaHttp {
         val (method, code, path) = extract(uri, context, response)
 
         Metric
-          .counter(create())
+          .counter(createCounterMetric())
           .labels(method, code, path)
           .inc()
 
@@ -52,7 +52,7 @@ trait AkkaHttpCounter extends HttpCounter with AkkaHttp {
     val (method, path) = extract(uri, request)
 
     Metric
-      .counter(create())
+      .counter(createCounterMetric())
       .labels(method, 500 toString, path)
       .inc()
   }

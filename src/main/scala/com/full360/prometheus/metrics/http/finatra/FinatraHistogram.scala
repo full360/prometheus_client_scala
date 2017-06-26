@@ -39,7 +39,7 @@ class FinatraHistogram extends SimpleFilter[Request, Response] with HttpHistogra
       val (method, path, _) = extract(request, None)
 
       Metric
-        .histogram(create())
+        .histogram(createHistogramMetric())
         .labels(method, path)
         .observe((stopTime - startTime).toDouble)
     }

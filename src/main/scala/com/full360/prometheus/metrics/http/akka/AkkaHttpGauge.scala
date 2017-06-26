@@ -36,7 +36,7 @@ trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
       val (method, path) = extract(uri, context)
 
       val gauge = Metric
-        .gauge(create())
+        .gauge(createGaugeMetric())
         .labels(method, path)
 
       gauge.inc()
