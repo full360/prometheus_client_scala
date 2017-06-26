@@ -25,27 +25,28 @@ import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpHistogram
 
 import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
 trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
 
   def histogram: Directive0 = histogramPath()
 
-  def histogramPath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
+  def histogramPath(uri: String = ""): Directive0 =
+    extractRequestContext.flatMap { context ⇒
 
-    val startTime = System.currentTimeMillis()
+      val startTime = System.currentTimeMillis()
 
-    mapResponse { response ⇒
+      mapResponse { response ⇒
 
-      val stopTime = System.currentTimeMillis()
-      val (method, path) = extract(uri, context)
+        val stopTime = System.currentTimeMillis()
+        val (method, path) = extract(uri, context)
 
-      Metric
-        .histogram(create())
-        .labels(method, path)
-        .observe((stopTime - startTime).toDouble)
+        Metric
+          .histogram(create())
+          .labels(method, path)
+          .observe((stopTime - startTime).toDouble)
 
-      response
-    }
-  }
+        response
+      }
+    } & handleExceptions(exceptionHandler(uri))
 }

@@ -25,24 +25,25 @@ import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpGauge
 
 import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, mapResponse }
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
 trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
 
   def gauge: Directive0 = gaugePath()
 
-  def gaugePath(uri: String = ""): Directive0 = extractRequestContext.flatMap { context ⇒
-    val (method, path) = extract(uri, context)
+  def gaugePath(uri: String = ""): Directive0 =
+    extractRequestContext.flatMap { context ⇒
+      val (method, path) = extract(uri, context)
 
-    val gauge = Metric
-      .gauge(create())
-      .labels(method, path)
+      val gauge = Metric
+        .gauge(create())
+        .labels(method, path)
 
-    gauge.inc()
+      gauge.inc()
 
-    mapResponse { response ⇒
-      gauge.dec()
-      response
-    }
-  }
+      mapResponse { response ⇒
+        gauge.dec()
+        response
+      }
+    } & handleExceptions(exceptionHandler(uri))
 }

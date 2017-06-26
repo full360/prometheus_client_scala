@@ -21,8 +21,9 @@
 
 package com.full360.prometheus.metrics.http.akka
 
-import akka.http.scaladsl.model.HttpResponse
-import akka.http.scaladsl.server.RequestContext
+import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.{ ExceptionHandler, RequestContext }
 
 trait AkkaHttp {
 
@@ -34,12 +35,25 @@ trait AkkaHttp {
   }
 
   def extract(uri: String, context: RequestContext): (String, String) = {
+    extract(uri, context.request)
+  }
+
+  def extract(uri: String, request: HttpRequest): (String, String) = {
     val path = uri match {
-      case ""    => context.request.uri.path.toString()
+      case ""    => request.uri.path.toString()
       case value => value
     }
-    val method = context.request.method.value.toLowerCase
+    val method = request.method.value.toLowerCase
 
-    (method, path)
+    method -> path
   }
+
+  def exceptionHandler(uri: String) = ExceptionHandler {
+    case throwable: Throwable => extractRequest { request ⇒
+      onError(uri, request, throwable)
+      throw throwable
+    }
+  }
+
+  def onError(uri: String, request: HttpRequest, throwable: Throwable) = {}
 }
