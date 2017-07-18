@@ -35,7 +35,9 @@ case class Metric(
   labels:    Map[String, String] = Map(),
   namespace: String              = "",
   buckets:   Seq[Double]         = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0)
-)
+) {
+  def key = s"${namespace}_$name"
+}
 
 object Metric {
 
@@ -47,7 +49,7 @@ object Metric {
   private val histograms = TrieMap.empty[String, Histogram]
 
   def gauge(metric: Metric) =
-    gauges.getOrElseUpdate(metric.name, Gauge.build()
+    gauges.getOrElseUpdate(metric.key, Gauge.build()
       .name(metric.name)
       .help(metric.help)
       .namespace(metric.namespace)
@@ -55,7 +57,7 @@ object Metric {
       .register(registry))
 
   def counter(metric: Metric) =
-    counters.getOrElseUpdate(metric.name, Counter.build()
+    counters.getOrElseUpdate(metric.key, Counter.build()
       .name(metric.name)
       .help(metric.help)
       .namespace(metric.namespace)
@@ -63,7 +65,7 @@ object Metric {
       .register(registry))
 
   def summary(metric: Metric) =
-    summaries.getOrElseUpdate(metric.name, Summary.build()
+    summaries.getOrElseUpdate(metric.key, Summary.build()
       .name(metric.name)
       .help(metric.help)
       .namespace(metric.namespace)
@@ -74,7 +76,7 @@ object Metric {
       .register(registry))
 
   def histogram(metric: Metric) =
-    histograms.getOrElseUpdate(metric.name, Histogram.build()
+    histograms.getOrElseUpdate(metric.key, Histogram.build()
       .name(metric.name)
       .help(metric.help)
       .namespace(metric.namespace)
