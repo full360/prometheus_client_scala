@@ -48,23 +48,25 @@ object Metric {
   private val summaries = TrieMap.empty[String, Summary]
   private val histograms = TrieMap.empty[String, Histogram]
 
-  def gauge(metric: Metric) =
+  def gauge(metric: Metric) = synchronized {
     gauges.getOrElseUpdate(metric.key, Gauge.build()
       .name(metric.name)
       .help(metric.help)
       .namespace(metric.namespace)
       .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
       .register(registry))
+  }
 
-  def counter(metric: Metric) =
+  def counter(metric: Metric) = synchronized {
     counters.getOrElseUpdate(metric.key, Counter.build()
       .name(metric.name)
       .help(metric.help)
       .namespace(metric.namespace)
       .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
       .register(registry))
+  }
 
-  def summary(metric: Metric) =
+  def summary(metric: Metric) = synchronized {
     summaries.getOrElseUpdate(metric.key, Summary.build()
       .name(metric.name)
       .help(metric.help)
@@ -74,8 +76,9 @@ object Metric {
       .quantile(0.90, 0.01)
       .quantile(0.99, 0.01)
       .register(registry))
+  }
 
-  def histogram(metric: Metric) =
+  def histogram(metric: Metric) = synchronized {
     histograms.getOrElseUpdate(metric.key, Histogram.build()
       .name(metric.name)
       .help(metric.help)
@@ -83,6 +86,7 @@ object Metric {
       .labelNames(metric.labels.map({ case (key, _) => key }).toSeq: _*)
       .buckets(metric.buckets: _*)
       .register(registry))
+  }
 
   def getRegistry = {
     val writer = new StringWriter
