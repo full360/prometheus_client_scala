@@ -27,7 +27,7 @@ trait Finatra {
 
   def extract(request: Request, response: Option[Response] = None) = {
     val method = request.method.toString().toLowerCase
-    val code = response.map(_.getStatusCode().toString)
+    val code = response.map(_.statusCode.toString)
     val path = request.params match {
       case params if params.isEmpty => request.uri
       case params => params.foldLeft(request.uri) { (path, param) =>

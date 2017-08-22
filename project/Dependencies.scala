@@ -38,7 +38,7 @@ object Dependencies {
     "org.scalatest"       %% "scalatest"                % Versions.scalatest   % "test",
     "org.mockito"          % "mockito-core"             % Versions.mockito     % "test",
     "org.hamcrest"         % "hamcrest-all"             % Versions.hamcrest    % "test",
-    "org.specs2"          %% "specs2"                   % Versions.specs2      % "test",
+    "org.specs2"          %% "specs2-core"              % Versions.specs2      % "test",
 
     // Akka Http
     "com.typesafe.akka"   %% "akka-http"                % Versions.akka        % "provided",
@@ -62,13 +62,13 @@ object Dependencies {
 
   private[this] object Versions {
     val prometheus  = "0.0.21"
-    val reflect     = "2.11.8"
+    val reflect     = "2.12.2"
     val akka        = "10.0.5"
-    val finatra     = "2.5.0"
-    val scalatest   = "2.2.3"
+    val finatra     = "2.12.0"
+    val scalatest   = "3.0.4"
     val mockito     = "1.9.5"
     val hamcrest    = "1.3"
-    val specs2      = "2.3.12"
+    val specs2      = "4.0.0-RC2"
     val guice       = "4.0"
   }
   // @formatter:on

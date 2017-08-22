@@ -37,26 +37,21 @@ class FinatraGaugeSpec extends FinatraBaseSpec with HttpGauge {
       .add[FinatraMetric]
   }
 
-  "Gauge metric" should provide {
-    "a gauge filter for Finatra" which {
-      "increase and decrease by 1" in {
-
-        server.httpGet(
-          path      = "/metrics",
-          andExpect = Ok,
-          withBody  =
-            s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
-               |# TYPE ${gaugeNamespace}_$gaugeName gauge
-               |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 1.0
-               |""".stripMargin
-        )
-        assertThat(Metric.getRegistry, is(
-          s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
-             |# TYPE ${gaugeNamespace}_$gaugeName gauge
-             |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 0.0
-             |""".stripMargin
-        ))
-      }
-    }
+  test("Gauge metric should provide a gauge filter for Finatra which increase and decrease by 1") {
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  =
+        s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
+           |# TYPE ${gaugeNamespace}_$gaugeName gauge
+           |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 1.0
+           |""".stripMargin
+    )
+    assertThat(Metric.getRegistry, is(
+      s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
+         |# TYPE ${gaugeNamespace}_$gaugeName gauge
+         |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 0.0
+         |""".stripMargin
+    ))
   }
 }

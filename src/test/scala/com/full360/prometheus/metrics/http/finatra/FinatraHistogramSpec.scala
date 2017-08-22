@@ -40,40 +40,36 @@ class FinatraHistogramSpec extends FinatraBaseSpec with HttpHistogram {
       .add[FinatraMetric]
   }
 
-  "Histogram metric" should provide {
-    "an histogram filter for Finatra" which {
-      "tracks the time an endpoint consumes" in {
-        server.httpGet(
-          path      = "/metrics",
-          andExpect = Ok,
-          withBody  = ""
-        )
+  test("Histogram metric should provide an histogram filter for Finatra which tracks the time an endpoint consumes") {
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  = ""
+    )
 
-        val array = Metric.getRegistry.replace('\n', ' ').split(' ')
+    val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
-        assertThat(Metric.getRegistry, is(
-          s"""# HELP ${histogramNamespace}_$histogramName $histogramHelp
-             |# TYPE ${histogramNamespace}_$histogramName histogram
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.005",} ${array(15)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.01",} ${array(17)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.025",} ${array(19)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.05",} ${array(21)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.075",} ${array(23)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.1",} ${array(25)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.25",} ${array(27)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.5",} ${array(29)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.75",} ${array(31)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="1.0",} ${array(33)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="2.5",} ${array(35)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="5.0",} ${array(37)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="7.5",} ${array(39)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="10.0",} ${array(41)}
-             |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="+Inf",} ${array(43)}
-             |${histogramNamespace}_${histogramName}_count{method="get",path="/metrics",} ${array(45)}
-             |${histogramNamespace}_${histogramName}_sum{method="get",path="/metrics",} ${array(47)}
-             |""".stripMargin
-        ))
-      }
-    }
+    assertThat(Metric.getRegistry, is(
+      s"""# HELP ${histogramNamespace}_$histogramName $histogramHelp
+         |# TYPE ${histogramNamespace}_$histogramName histogram
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.005",} ${array(15)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.01",} ${array(17)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.025",} ${array(19)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.05",} ${array(21)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.075",} ${array(23)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.1",} ${array(25)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.25",} ${array(27)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.5",} ${array(29)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="0.75",} ${array(31)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="1.0",} ${array(33)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="2.5",} ${array(35)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="5.0",} ${array(37)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="7.5",} ${array(39)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="10.0",} ${array(41)}
+         |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="+Inf",} ${array(43)}
+         |${histogramNamespace}_${histogramName}_count{method="get",path="/metrics",} ${array(45)}
+         |${histogramNamespace}_${histogramName}_sum{method="get",path="/metrics",} ${array(47)}
+         |""".stripMargin
+    ))
   }
 }

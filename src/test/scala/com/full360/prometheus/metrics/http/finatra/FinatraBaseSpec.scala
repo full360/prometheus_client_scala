@@ -37,8 +37,6 @@ abstract class FinatraBaseSpec extends FeatureTest {
   }
   )
 
-  def provide = afterWord("provide")
-
   def configureHttp(router: HttpRouter): Unit
 
   override protected def afterEach() = {

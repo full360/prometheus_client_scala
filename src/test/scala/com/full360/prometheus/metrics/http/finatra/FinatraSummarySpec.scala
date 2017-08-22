@@ -40,33 +40,29 @@ class FinatraSummarySpec extends FinatraBaseSpec with HttpSummary {
       .add[FinatraMetric]
   }
 
-  "Summary metric" should provide {
-    "a summary filter for Finatra" which {
-      "tracks the time an endpoint consumes" in {
-        server.httpGet(
-          path      = "/metrics",
-          andExpect = Ok,
-          withBody  = ""
-        )
+  test("Summary metric should provide a summary filter for Finatra which tracks the time an endpoint consumes") {
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  = ""
+    )
 
-        val array = Metric.getRegistry.replace('\n', ' ').split(' ')
+    val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
-        assert(array(15).toDouble === 0.0)
-        assert(array(17).toDouble === 0.0)
-        assert(array(19).toDouble === 0.0)
-        assert(array(23).toDouble === 0.0)
+    assert(array(15).toDouble === 0.0)
+    assert(array(17).toDouble === 0.0)
+    assert(array(19).toDouble === 0.0)
+    assert(array(23).toDouble === 0.0)
 
-        assertThat(Metric.getRegistry, is(
-          s"""# HELP ${summaryNamespace}_$summaryName $summaryHelp
-             |# TYPE ${summaryNamespace}_$summaryName summary
-             |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.5",} ${array(15)}
-             |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.9",} ${array(17)}
-             |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.99",} ${array(19)}
-             |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/metrics",} 1.0
-             |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/metrics",} ${array(23)}
-             |""".stripMargin
-        ))
-      }
-    }
+    assertThat(Metric.getRegistry, is(
+      s"""# HELP ${summaryNamespace}_$summaryName $summaryHelp
+         |# TYPE ${summaryNamespace}_$summaryName summary
+         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.5",} ${array(15)}
+         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.9",} ${array(17)}
+         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.99",} ${array(19)}
+         |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/metrics",} 1.0
+         |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/metrics",} ${array(23)}
+         |""".stripMargin
+    ))
   }
 }

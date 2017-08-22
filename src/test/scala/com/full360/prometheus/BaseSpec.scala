@@ -21,7 +21,7 @@
 
 package com.full360.prometheus
 
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{ BeforeAndAfterEach, Matchers, WordSpecLike }
 
 trait BaseSpec extends WordSpecLike with BeforeAndAfterEach with MockitoSugar with Matchers {

@@ -37,22 +37,18 @@ class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
       .add[FinatraMetric]
   }
 
-  "Counter metric" should provide {
-    "a counter filter for Finatra" which {
-      "increase by 1" in {
-        server.httpGet(
-          path      = "/metrics",
-          andExpect = Ok,
-          withBody  = ""
-        )
+  test("Counter metric should provide a counter filter for Finatra which increase by 1") {
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  = ""
+    )
 
-        assertThat(Metric.getRegistry, is(
-          s"""# HELP ${counterNamespace}_$counterName $counterHelp
-             |# TYPE ${counterNamespace}_$counterName counter
-             |${counterNamespace}_$counterName{method="get",code="200",path="/metrics",} 1.0
-             |""".stripMargin
-        ))
-      }
-    }
+    assertThat(Metric.getRegistry, is(
+      s"""# HELP ${counterNamespace}_$counterName $counterHelp
+         |# TYPE ${counterNamespace}_$counterName counter
+         |${counterNamespace}_$counterName{method="get",code="200",path="/metrics",} 1.0
+         |""".stripMargin
+    ))
   }
 }
