@@ -61,7 +61,7 @@ object Dependencies {
   ))
 
   private[this] object Versions {
-    val prometheus  = "0.0.21"
+    val prometheus  = "0.0.26"
     val reflect     = "2.12.2"
     val akka        = "10.0.5"
     val finatra     = "2.12.0"
