@@ -52,16 +52,19 @@ object Histogram {
       case q"$mods def $methodName[..$types](...$args): $returnType = { ..$body }" :: Nil =>
         q"""$mods def $methodName[..$types](...$args): $returnType = {
                 import com.full360.prometheus.Metric
+                import scala.concurrent.duration
+                import scala.concurrent.duration.FiniteDuration
 
-                val startTime = System.currentTimeMillis()
+                val startTime = System.nanoTime()
                 try {
                   ..$body
                 } finally {
-                  val stopTime = System.currentTimeMillis()
+                  val endTime = System.nanoTime()
+                  val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
 
                   Metric.histogram($metric)
                         .labels($metric.labels.map({case (_, value) => value}).toSeq: _*)
-                        .observe((stopTime - startTime).toDouble)
+                        .observe(elapesedTime.toUnit($metric.timeUnit))
                 }
               }"""
       case _ =>
