@@ -23,33 +23,38 @@ package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpSummary
-
 import javax.inject.{ Inject, Singleton }
 
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
 import com.twitter.finatra.http.exceptions.ExceptionManager
 
+import scala.concurrent.duration
+import scala.concurrent.duration.FiniteDuration
+
 @Singleton
 class FinatraSummary @Inject() (exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpSummary with Finatra {
 
   override def apply(request: Request, service: Service[Request, Response]) = {
 
-    val startTime = System.currentTimeMillis()
+    val startTime = System.nanoTime()
 
     def observe[A](result: A) = {
 
-      val stopTime = System.currentTimeMillis()
+      val endTime = System.nanoTime()
       val (method, path, code) = result match {
         case response: Response   => extract(request, Some(response))
         case throwable: Throwable => extract(request, Some(exceptionManager.toResponse(request, throwable)))
         case _                    => extract(request, None)
       }
 
+      val metric = createSummaryMetric()
+      val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+
       Metric
-        .summary(createSummaryMetric())
+        .summary(metric)
         .labels(method, code.getOrElse("500"), path)
-        .observe((stopTime - startTime).toDouble)
+        .observe(elapesedTime.toUnit(metric.timeUnit))
     }
 
     service(request)

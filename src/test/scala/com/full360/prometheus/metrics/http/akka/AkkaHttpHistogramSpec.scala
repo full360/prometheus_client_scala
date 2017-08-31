@@ -55,25 +55,24 @@ class AkkaHttpHistogramSpec extends BaseSpec with ScalatestRouteTest with AkkaHt
           assertThat(Metric.getRegistry, is(
             s"""# HELP ${histogramNamespace}_$histogramName $histogramHelp
                |# TYPE ${histogramNamespace}_$histogramName histogram
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.005",} ${array(15)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.01",} ${array(17)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.025",} ${array(19)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.05",} ${array(21)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.075",} ${array(23)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.1",} ${array(25)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.25",} ${array(27)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.5",} ${array(29)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.75",} ${array(31)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="1.0",} ${array(33)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="2.5",} ${array(35)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="5.0",} ${array(37)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="7.5",} ${array(39)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="10.0",} ${array(41)}
-               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="+Inf",} ${array(43)}
-               |${histogramNamespace}_${histogramName}_count{method="get",path="/",} ${array(45)}
-               |${histogramNamespace}_${histogramName}_sum{method="get",path="/",} ${array(47)}
-               |""".stripMargin
-          ))
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.005",} ${array(16)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.01",} ${array(18)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.025",} ${array(20)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.05",} ${array(22)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.075",} ${array(24)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.1",} ${array(26)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.25",} ${array(28)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.5",} ${array(30)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="0.75",} ${array(32)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="1.0",} ${array(34)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="2.5",} ${array(36)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="5.0",} ${array(38)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="7.5",} ${array(40)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="10.0",} ${array(42)}
+               |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="+Inf",} ${array(44)}
+               |${histogramNamespace}_${histogramName}_count{method="get",path="/",} ${array(46)}
+               |${histogramNamespace}_${histogramName}_sum{method="get",path="/",} ${array(48)}
+               |""".stripMargin))
         }
       }
     }

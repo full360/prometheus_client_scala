@@ -23,25 +23,30 @@ package com.full360.prometheus.metrics.http.finatra
 
 import com.full360.prometheus.Metric
 import com.full360.prometheus.metrics.http.HttpHistogram
-
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
+
+import scala.concurrent.duration
+import scala.concurrent.duration.FiniteDuration
 
 class FinatraHistogram extends SimpleFilter[Request, Response] with HttpHistogram with Finatra {
 
   override def apply(request: Request, service: Service[Request, Response]) = {
 
-    val startTime = System.currentTimeMillis()
+    val startTime = System.nanoTime()
 
     def observe[A](result: A) = {
 
-      val stopTime = System.currentTimeMillis()
+      val endTime = System.nanoTime()
       val (method, path, _) = extract(request, None)
 
+      val metric = createHistogramMetric()
+      val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+
       Metric
-        .histogram(createHistogramMetric())
+        .histogram(metric)
         .labels(method, path)
-        .observe((stopTime - startTime).toDouble)
+        .observe(elapesedTime.toUnit(metric.timeUnit))
     }
 
     service(request)

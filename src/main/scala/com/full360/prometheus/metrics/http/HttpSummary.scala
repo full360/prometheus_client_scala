@@ -26,8 +26,8 @@ import com.full360.prometheus.Metric
 trait HttpSummary {
 
   val summaryNamespace = "http_server"
-  val summaryName = "request_duration_milliseconds"
-  val summaryHelp = "A summary for http response in milliseconds"
+  val summaryName = "request_duration_seconds"
+  val summaryHelp = "A summary for HTTP response duration in seconds"
   val summaryLabels = Map("method" -> "", "code" -> "", "path" -> "")
 
   def createSummaryMetric() = Metric(summaryName, summaryHelp, summaryLabels, summaryNamespace)

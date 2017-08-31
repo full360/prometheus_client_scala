@@ -26,8 +26,8 @@ import com.full360.prometheus.Metric
 trait HttpHistogram {
 
   val histogramNamespace = "http_server"
-  val histogramName = "request_duration_milliseconds"
-  val histogramHelp = "An histogram for http response in milliseconds"
+  val histogramName = "request_duration_seconds"
+  val histogramHelp = "An histogram for HTTP response duration in seconds"
   val histogramLabels = Map("method" -> "", "path" -> "")
 
   def createHistogramMetric() = Metric(histogramName, histogramHelp, histogramLabels, histogramNamespace)

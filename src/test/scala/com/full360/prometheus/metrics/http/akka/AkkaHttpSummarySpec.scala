@@ -52,21 +52,15 @@ class AkkaHttpSummarySpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
 
           val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
-          assert(array(15).toDouble === 0.0)
-          assert(array(17).toDouble === 0.0)
-          assert(array(19).toDouble === 0.0)
-          assert(array(23).toDouble === 0.0)
-
           assertThat(Metric.getRegistry, is(
             s"""# HELP ${summaryNamespace}_$summaryName $summaryHelp
                |# TYPE ${summaryNamespace}_$summaryName summary
-               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.5",} ${array(15)}
-               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.9",} ${array(17)}
-               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.99",} ${array(19)}
-               |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/",} 1.0
-               |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/",} ${array(23)}
-               |""".stripMargin
-          ))
+               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.5",} ${array(16)}
+               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.9",} ${array(18)}
+               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.99",} ${array(20)}
+               |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/",} ${array(22)}
+               |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/",} ${array(24)}
+               |""".stripMargin))
         }
       }
     }

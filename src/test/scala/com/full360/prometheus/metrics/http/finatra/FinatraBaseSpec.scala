@@ -33,9 +33,8 @@ abstract class FinatraBaseSpec extends FeatureTest {
     verbose            = false,
     disableTestLogging = true,
     twitterServer      = new HttpServer {
-    override protected def configureHttp(router: HttpRouter) = FinatraBaseSpec.this.configureHttp(router)
-  }
-  )
+      override protected def configureHttp(router: HttpRouter) = FinatraBaseSpec.this.configureHttp(router)
+    })
 
   def configureHttp(router: HttpRouter): Unit
 
