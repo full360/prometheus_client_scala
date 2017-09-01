@@ -72,7 +72,8 @@ class AkkaHttpHistogramSpec extends BaseSpec with ScalatestRouteTest with AkkaHt
                |${histogramNamespace}_${histogramName}_bucket{method="get",path="/",le="+Inf",} ${array(44)}
                |${histogramNamespace}_${histogramName}_count{method="get",path="/",} ${array(46)}
                |${histogramNamespace}_${histogramName}_sum{method="get",path="/",} ${array(48)}
-               |""".stripMargin))
+               |""".stripMargin
+          ))
         }
       }
     }

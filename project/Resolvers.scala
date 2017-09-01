@@ -30,5 +30,6 @@ object Resolvers {
     "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
     "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
     "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"))
+    "Finatra Repo" at "http://twitter.github.com/finatra"
+  ))
 }

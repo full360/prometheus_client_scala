@@ -29,7 +29,8 @@ object Publish {
     "Sonatype Nexus Repository Manager",
     "oss.sonatype.org",
     sys.env.getOrElse("SONATYPE_USERNAME", ""),
-    sys.env.getOrElse("SONATYPE_PASSWORD", ""))
+    sys.env.getOrElse("SONATYPE_PASSWORD", "")
+  )
 
   private lazy val pom = {
     <url>https://github.com/full360/prometheus_client_scala</url>
@@ -61,5 +62,6 @@ object Publish {
     pomExtra := pom,
     pgpSecretRing := file(".secring.gpg"),
     pgpPublicRing := file(".pubring.gpg"),
-    pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray))
+    pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
+  )
 }

@@ -56,7 +56,8 @@ object Dependencies {
     "com.twitter" %% "inject-modules" % Versions.finatra % "test",
     "com.twitter" %% "inject-modules" % Versions.finatra % "test" classifier "tests",
 
-    "com.google.inject.extensions" % "guice-testlib" % Versions.guice % "test"))
+    "com.google.inject.extensions" % "guice-testlib" % Versions.guice % "test"
+  ))
 
   private[this] object Versions {
     val prometheus = "0.0.26"

@@ -19,8 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import scalariform.formatter.preferences.{ AlignArguments, AlignParameters, AlignSingleLineCaseStatements, DoubleIndentConstructorArguments, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
-
+import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import sbt.Keys._
@@ -53,15 +52,18 @@ object Settings {
       "-Yno-adapted-args",
       "-Ywarn-dead-code",
       "-Ywarn-numeric-widen",
-      "-Ywarn-unused-import"),
+      "-Ywarn-unused-import"
+    ),
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " },
     parallelExecution in Test := false,
 
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full))
+    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+  )
 
   private lazy val assemble = Seq(
     assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
-    assemblyJarName in assembly := s"${name.value}-${version.value}.jar")
+    assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
+  )
 
   private lazy val format = {
 
@@ -72,10 +74,14 @@ object Settings {
       .setPreference(RewriteArrowSymbols, false)
       .setPreference(DoubleIndentConstructorArguments, true)
       .setPreference(SpacesAroundMultiImports, true)
+      .setPreference(DanglingCloseParenthesis, Force)
+      .setPreference(FirstArgumentOnNewline, Force)
+      .setPreference(FirstParameterOnNewline, Force)
 
     SbtScalariform.baseScalariformSettings ++ Seq(
       ScalariformKeys.preferences in Compile := preferences,
-      ScalariformKeys.preferences in Test := preferences)
+      ScalariformKeys.preferences in Test := preferences
+    )
   }
 
   def apply() = base ++ assemble ++ format

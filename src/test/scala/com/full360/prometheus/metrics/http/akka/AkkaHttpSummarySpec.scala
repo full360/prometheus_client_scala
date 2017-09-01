@@ -60,7 +60,8 @@ class AkkaHttpSummarySpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
                |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.99",} ${array(20)}
                |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/",} ${array(22)}
                |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/",} ${array(24)}
-               |""".stripMargin))
+               |""".stripMargin
+          ))
         }
       }
     }

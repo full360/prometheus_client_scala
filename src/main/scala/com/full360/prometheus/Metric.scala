@@ -37,7 +37,8 @@ case class Metric(
     labels:    Map[String, String] = Map(),
     namespace: String              = "",
     buckets:   Seq[Double]         = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0),
-    timeUnit:  TimeUnit            = duration.SECONDS) {
+    timeUnit:  TimeUnit            = duration.SECONDS
+) {
   def key = s"${namespace}_$name"
 }
 

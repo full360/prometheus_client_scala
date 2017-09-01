@@ -50,14 +50,16 @@ class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttp
             s"""# HELP ${counterNamespace}_$counterName $counterHelp
                |# TYPE ${counterNamespace}_$counterName counter
                |${counterNamespace}_$counterName{method="get",code="200",path="/",} 1.0
-               |""".stripMargin))
+               |""".stripMargin
+          ))
 
           Get() ~> route ~> check {
             assertThat(Metric.getRegistry, is(
               s"""# HELP ${counterNamespace}_$counterName $counterHelp
                  |# TYPE ${counterNamespace}_$counterName counter
                  |${counterNamespace}_$counterName{method="get",code="200",path="/",} 2.0
-                 |""".stripMargin))
+                 |""".stripMargin
+            ))
           }
         }
       }
