@@ -49,12 +49,12 @@ class FinatraSummary @Inject() (exceptionManager: ExceptionManager) extends Simp
       }
 
       val metric = createSummaryMetric()
-      val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+      val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
 
       Metric
         .summary(metric)
         .labels(method, code.getOrElse("500"), path)
-        .observe(elapesedTime.toUnit(metric.timeUnit))
+        .observe(elapsedTime.toUnit(metric.timeUnit))
     }
 
     service(request)

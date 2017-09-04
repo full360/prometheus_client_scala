@@ -60,11 +60,11 @@ object Summary {
                   ..$body
                 } finally {
                   val endTime = System.nanoTime()
-                  val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+                  val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
 
                   Metric.summary($metric)
                         .labels($metric.labels.map({case (_, value) => value}).toSeq: _*)
-                        .observe(elapesedTime.toUnit($metric.timeUnit))
+                        .observe(elapsedTime.toUnit($metric.timeUnit))
                 }
               }"""
       case _ =>

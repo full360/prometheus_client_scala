@@ -45,12 +45,12 @@ trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
         val (method, path) = extract(uri, context)
 
         val metric = createHistogramMetric()
-        val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+        val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
 
         Metric
           .histogram(metric)
           .labels(method, path)
-          .observe(elapesedTime.toUnit(metric.timeUnit))
+          .observe(elapsedTime.toUnit(metric.timeUnit))
 
         response
       }

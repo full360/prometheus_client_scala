@@ -41,12 +41,12 @@ class FinatraHistogram extends SimpleFilter[Request, Response] with HttpHistogra
       val (method, path, _) = extract(request, None)
 
       val metric = createHistogramMetric()
-      val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+      val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
 
       Metric
         .histogram(metric)
         .labels(method, path)
-        .observe(elapesedTime.toUnit(metric.timeUnit))
+        .observe(elapsedTime.toUnit(metric.timeUnit))
     }
 
     service(request)

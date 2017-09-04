@@ -45,12 +45,12 @@ trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
         val (method, code, path) = extract(uri, context, response)
 
         val metric = createSummaryMetric()
-        val elapesedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+        val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
 
         Metric
           .summary(metric)
           .labels(method, code, path)
-          .observe(elapesedTime.toUnit(metric.timeUnit))
+          .observe(elapsedTime.toUnit(metric.timeUnit))
 
         response
       }
