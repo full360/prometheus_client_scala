@@ -27,6 +27,9 @@ import com.full360.prometheus.metrics.http.HttpHistogram
 import akka.http.scaladsl.server.Directive0
 import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
+import scala.concurrent.duration
+import scala.concurrent.duration.FiniteDuration
+
 trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
 
   def histogram: Directive0 = histogramPath()
@@ -34,17 +37,20 @@ trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
   def histogramPath(uri: String = ""): Directive0 =
     extractRequestContext.flatMap { context ⇒
 
-      val startTime = System.currentTimeMillis()
+      val startTime = System.nanoTime()
 
       mapResponse { response ⇒
 
-        val stopTime = System.currentTimeMillis()
+        val endTime = System.nanoTime()
         val (method, path) = extract(uri, context)
 
+        val metric = createHistogramMetric()
+        val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+
         Metric
-          .histogram(createHistogramMetric())
+          .histogram(metric)
           .labels(method, path)
-          .observe((stopTime - startTime).toDouble)
+          .observe(elapsedTime.toUnit(metric.timeUnit))
 
         response
       }

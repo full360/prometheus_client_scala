@@ -62,7 +62,7 @@ class SummarySpec extends BaseSpec {
         assert(array(13).toDouble === time.toDouble)
         assert(array(17).toDouble === time.toDouble)
 
-        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name summary\n$name{method="foo",quantile="0.5",} ${array(9)}\n$name{method="foo",quantile="0.9",} ${array(11)}\n$name{method="foo",quantile="0.99",} ${array(13)}\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(17)}\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name summary\n$name{method="foo",quantile="0.5",} ${array(9)}\n$name{method="foo",quantile="0.9",} ${array(11)}\n$name{method="foo",quantile="0.99",} ${array(13)}\n${name}_count{method="foo",} ${array(15)}\n${name}_sum{method="foo",} ${array(17)}\n"""))
       }
       "does not affect parameters and result of the method" in {
         assertThat(baz(4, 6), is(10))

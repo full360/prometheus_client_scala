@@ -27,6 +27,9 @@ import com.full360.prometheus.metrics.http.HttpSummary
 import akka.http.scaladsl.server.Directive0
 import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
+import scala.concurrent.duration
+import scala.concurrent.duration.FiniteDuration
+
 trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
 
   def summary: Directive0 = summaryPath()
@@ -34,17 +37,20 @@ trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
   def summaryPath(uri: String = ""): Directive0 =
     extractRequestContext.flatMap { context ⇒
 
-      val startTime = System.currentTimeMillis()
+      val startTime = System.nanoTime()
 
       mapResponse { response ⇒
 
-        val stopTime = System.currentTimeMillis()
+        val endTime = System.nanoTime()
         val (method, code, path) = extract(uri, context, response)
 
+        val metric = createSummaryMetric()
+        val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+
         Metric
-          .summary(createSummaryMetric())
+          .summary(metric)
           .labels(method, code, path)
-          .observe((stopTime - startTime).toDouble)
+          .observe(elapsedTime.toUnit(metric.timeUnit))
 
         response
       }

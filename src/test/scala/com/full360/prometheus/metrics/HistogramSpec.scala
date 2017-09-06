@@ -57,9 +57,9 @@ class HistogramSpec extends BaseSpec {
 
         val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
-        assert(array(41).toDouble === time.toDouble)
-        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name histogram\n${name}_bucket{method="foo",le="0.005",} 0.0\n${name}_bucket{method="foo",le="0.01",} 0.0\n${name}_bucket{method="foo",le="0.025",} 0.0\n${name}_bucket{method="foo",le="0.05",} 0.0\n${name}_bucket{method="foo",le="0.075",} 0.0\n${name}_bucket{method="foo",le="0.1",} 0.0\n${name}_bucket{method="foo",le="0.25",} 0.0\n${name}_bucket{method="foo",le="0.5",} 0.0\n${name}_bucket{method="foo",le="0.75",} 0.0\n${name}_bucket{method="foo",le="1.0",} 0.0\n${name}_bucket{method="foo",le="2.5",} 0.0\n${name}_bucket{method="foo",le="5.0",} 0.0\n${name}_bucket{method="foo",le="7.5",} 0.0\n${name}_bucket{method="foo",le="10.0",} ${array(35)}\n${name}_bucket{method="foo",le="+Inf",} ${array(37)}\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(41)}\n"""))
+        assertThat(Metric.getRegistry, is(s"""# HELP $name $help\n# TYPE $name histogram\n${name}_bucket{method="foo",le="0.005",} ${array(9)}\n${name}_bucket{method="foo",le="0.01",} ${array(11)}\n${name}_bucket{method="foo",le="0.025",} ${array(13)}\n${name}_bucket{method="foo",le="0.05",} ${array(15)}\n${name}_bucket{method="foo",le="0.075",} ${array(17)}\n${name}_bucket{method="foo",le="0.1",} ${array(19)}\n${name}_bucket{method="foo",le="0.25",} ${array(21)}\n${name}_bucket{method="foo",le="0.5",} ${array(23)}\n${name}_bucket{method="foo",le="0.75",} ${array(25)}\n${name}_bucket{method="foo",le="1.0",} ${array(27)}\n${name}_bucket{method="foo",le="2.5",} ${array(29)}\n${name}_bucket{method="foo",le="5.0",} ${array(31)}\n${name}_bucket{method="foo",le="7.5",} ${array(33)}\n${name}_bucket{method="foo",le="10.0",} ${array(35)}\n${name}_bucket{method="foo",le="+Inf",} ${array(37)}\n${name}_count{method="foo",} 1.0\n${name}_sum{method="foo",} ${array(41)}\n"""))
       }
+
       "does not affect parameters and result of the method" in {
         assertThat(baz(4, 6), is(10))
       }

@@ -49,19 +49,14 @@ class FinatraSummarySpec extends FinatraBaseSpec with HttpSummary {
 
     val array = Metric.getRegistry.replace('\n', ' ').split(' ')
 
-    assert(array(15).toDouble === 0.0)
-    assert(array(17).toDouble === 0.0)
-    assert(array(19).toDouble === 0.0)
-    assert(array(23).toDouble === 0.0)
-
     assertThat(Metric.getRegistry, is(
       s"""# HELP ${summaryNamespace}_$summaryName $summaryHelp
          |# TYPE ${summaryNamespace}_$summaryName summary
-         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.5",} ${array(15)}
-         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.9",} ${array(17)}
-         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.99",} ${array(19)}
-         |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/metrics",} 1.0
-         |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/metrics",} ${array(23)}
+         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.5",} ${array(16)}
+         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.9",} ${array(18)}
+         |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.99",} ${array(20)}
+         |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/metrics",} ${array(22)}
+         |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/metrics",} ${array(24)}
          |""".stripMargin
     ))
   }

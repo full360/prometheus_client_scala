@@ -19,8 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import scalariform.formatter.preferences.{ AlignArguments, AlignParameters, AlignSingleLineCaseStatements, DoubleIndentClassDeclaration, FormattingPreferences, RewriteArrowSymbols, SpacesAroundMultiImports }
-
+import scalariform.formatter.preferences._
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import sbt.Keys._
@@ -35,7 +34,7 @@ object Settings {
     version := "0.6-SNAPSHOT",
     licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
-    scalaVersion := "2.12.2",
+    scalaVersion := "2.12.3",
     scalacOptions := Seq(
       "-deprecation",
       "-encoding", "UTF-8",
@@ -73,10 +72,13 @@ object Settings {
       .setPreference(AlignParameters, true)
       .setPreference(AlignArguments, true)
       .setPreference(RewriteArrowSymbols, false)
-      .setPreference(DoubleIndentClassDeclaration, true)
+      .setPreference(DoubleIndentConstructorArguments, true)
       .setPreference(SpacesAroundMultiImports, true)
+      .setPreference(DanglingCloseParenthesis, Force)
+      .setPreference(FirstArgumentOnNewline, Force)
+      .setPreference(FirstParameterOnNewline, Force)
 
-    SbtScalariform.scalariformSettings ++ Seq(
+    SbtScalariform.baseScalariformSettings ++ Seq(
       ScalariformKeys.preferences in Compile := preferences,
       ScalariformKeys.preferences in Test := preferences
     )

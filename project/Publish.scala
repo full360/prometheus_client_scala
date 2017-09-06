@@ -34,26 +34,26 @@ object Publish {
 
   private lazy val pom = {
     <url>https://github.com/full360/prometheus_client_scala</url>
-      <licenses>
-        <license>
-          <name>MIT License</name>
-          <url>http://www.opensource.org/licenses/mit-license.php</url>
-        </license>
-      </licenses>
-      <scm>
-        <connection>scm:git:github.com/full360/prometheus_client_scala.git</connection>
-        <developerConnection>scm:git:git@github.com:full360/prometheus_client_scala.git</developerConnection>
-        <url>github.com/full360/prometheus_client_scala.git</url>
-      </scm>
-      <developers>
-        <developer>
-          <id>igoticecream</id>
-          <name>Pedro Diaz</name>
-          <email>pedro.diaz@full360.com</email>
-          <organization>Full 360 Inc</organization>
-          <organizationUrl>http://www.full360.com</organizationUrl>
-        </developer>
-      </developers>
+    <licenses>
+      <license>
+        <name>MIT License</name>
+        <url>http://www.opensource.org/licenses/mit-license.php</url>
+      </license>
+    </licenses>
+    <scm>
+      <connection>scm:git:github.com/full360/prometheus_client_scala.git</connection>
+      <developerConnection>scm:git:git@github.com:full360/prometheus_client_scala.git</developerConnection>
+      <url>github.com/full360/prometheus_client_scala.git</url>
+    </scm>
+    <developers>
+      <developer>
+        <id>igoticecream</id>
+        <name>Pedro Diaz</name>
+        <email>pedro.diaz@full360.com</email>
+        <organization>Full 360 Inc</organization>
+        <organizationUrl>http://www.full360.com</organizationUrl>
+      </developer>
+    </developers>
   }
 
   def apply() = Seq(
