@@ -27,10 +27,10 @@ object Dependencies {
   // @formatter:off
   def apply() = Seq(libraryDependencies ++= Seq(
     // Core
-    "io.prometheus" % "simpleclient" % Versions.prometheus % "compile",
-    "io.prometheus" % "simpleclient_hotspot" % Versions.prometheus % "compile",
-    "io.prometheus" % "simpleclient_servlet" % Versions.prometheus % "compile",
-    "io.prometheus" % "simpleclient_pushgateway" % Versions.prometheus % "compile",
+    "io.prometheus" % "simpleclient" % Versions.prometheus % "provided",
+    "io.prometheus" % "simpleclient_hotspot" % Versions.prometheus % "provided",
+    "io.prometheus" % "simpleclient_servlet" % Versions.prometheus % "provided",
+    "io.prometheus" % "simpleclient_pushgateway" % Versions.prometheus % "provided",
     "org.scala-lang" % "scala-reflect" % Versions.reflect % "compile",
 
     // Test
