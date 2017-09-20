@@ -29,8 +29,6 @@ object Dependencies {
     // Core
     "io.prometheus" % "simpleclient" % Versions.prometheus % "provided",
     "io.prometheus" % "simpleclient_hotspot" % Versions.prometheus % "provided",
-    "io.prometheus" % "simpleclient_servlet" % Versions.prometheus % "provided",
-    "io.prometheus" % "simpleclient_pushgateway" % Versions.prometheus % "provided",
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile",
 
     // Test
