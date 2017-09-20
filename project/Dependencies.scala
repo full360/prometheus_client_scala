@@ -62,9 +62,9 @@ object Dependencies {
 
   private[this] object Versions {
     val prometheus = "0.0.26"
-    val reflect = "2.12.2"
+    val reflect = "2.12.2" //TODO
     val akka = "10.0.9"
-    val finatra = "2.12.0"
+    val finatra = "2.12.0" //TODO
     val scalatest = "3.0.4"
     val mockito = "1.9.5"
     val hamcrest = "1.3"
