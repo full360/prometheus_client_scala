@@ -31,9 +31,10 @@ object Dependencies {
     "io.prometheus" % "simpleclient_hotspot" % Versions.prometheus % "provided",
     "io.prometheus" % "simpleclient_servlet" % Versions.prometheus % "provided",
     "io.prometheus" % "simpleclient_pushgateway" % Versions.prometheus % "provided",
-    "org.scala-lang" % "scala-reflect" % Versions.reflect % "compile",
+    "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile",
 
     // Test
+    "junit" % "junit" % "4.12" % "test",
     "org.scalatest" %% "scalatest" % Versions.scalatest % "test",
     "org.mockito" % "mockito-core" % Versions.mockito % "test",
     "org.hamcrest" % "hamcrest-all" % Versions.hamcrest % "test",
@@ -61,9 +62,8 @@ object Dependencies {
 
   private[this] object Versions {
     val prometheus = "0.0.26"
-    val reflect = "2.12.2"
     val akka = "10.0.9"
-    val finatra = "2.12.0"
+    val finatra = "2.13.0"
     val scalatest = "3.0.4"
     val mockito = "1.9.5"
     val hamcrest = "1.3"

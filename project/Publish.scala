@@ -57,9 +57,24 @@ object Publish {
   }
 
   def apply() = Seq(
-    publishMavenStyle := true,
+    publishTo := Some(
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
+    ),
+
+    licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
+    homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
+
     credentials += credential,
+
+    publishArtifact in Compile := true,
+    publishArtifact in Test := false,
+    publishMavenStyle := true,
+
     pomExtra := pom,
+
     pgpSecretRing := file(".secring.gpg"),
     pgpPublicRing := file(".pubring.gpg"),
     pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)

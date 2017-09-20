@@ -1,7 +1,8 @@
 language: scala
 
 scala:
-   - 2.11.8
+   - 2.11.11
+   - 2.12.3
 
 cache:
   directories:
@@ -10,17 +11,19 @@ cache:
     - $HOME/.ivy2
 
 script:
-  - sbt compile test
+  - sbt ++$TRAVIS_SCALA_VERSION compile test
 
-  # Trick to avoid unnecessary cache updates
-  - find $HOME/.sbt -name "*.lock" | xargs rm
+before_cache:
+  # Tricks to avoid unnecessary cache updates
+  - find $HOME/.ivy2 -name "ivydata-*.properties" -delete
+  - find $HOME/.sbt -name "*.lock" -delete
 
 before_install:
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .secring.gpg.enc -out .secring.gpg -d
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .pubring.gpg.enc -out .pubring.gpg -d
 
 after_success:
-  - '[ "${TRAVIS_BRANCH}" = "master" ] && sbt publishSigned || true'
+  - '[ "${TRAVIS_BRANCH}" = "master" ] && sbt ++$TRAVIS_SCALA_VERSION publishSigned || true'
 
 jdk:
    - oraclejdk8
