@@ -58,7 +58,10 @@ object Publish {
 
   def apply() = Seq(
     publishTo := Some(
-      Opts.resolver.sonatypeSnapshots
+      if (isSnapshot.value)
+        Opts.resolver.sonatypeSnapshots
+      else
+        Opts.resolver.sonatypeStaging
     ),
 
     licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
@@ -70,18 +73,7 @@ object Publish {
     publishArtifact in Test := false,
     publishMavenStyle := true,
 
-    //pomIncludeRepository := { _ => false },
     pomExtra := pom,
-
-    /*
-    scmInfo := Some(ScmInfo(
-      url("https://github.com/full360/prometheus_client_scala"),
-      "scm:git:git@github.com:full360/prometheus_client_scala.git"
-    )),
-    developers := List(
-      Developer(id = "igoticecream", name = "Pedro Diaz", email = "pedro.diaz@full360.com", url = url("https://github.com/igoticecream"))
-    ),
-    */
 
     pgpSecretRing := file(".secring.gpg"),
     pgpPublicRing := file(".pubring.gpg"),

@@ -72,13 +72,10 @@ object Settings {
       .setPreference(AlignParameters, true)
       .setPreference(AlignArguments, true)
       .setPreference(RewriteArrowSymbols, false)
-      .setPreference(DoubleIndentConstructorArguments, true)
+      .setPreference(DoubleIndentClassDeclaration, true)
       .setPreference(SpacesAroundMultiImports, true)
-      .setPreference(DanglingCloseParenthesis, Force)
-      .setPreference(FirstArgumentOnNewline, Force)
-      .setPreference(FirstParameterOnNewline, Force)
 
-    SbtScalariform.baseScalariformSettings ++ Seq(
+    SbtScalariform.scalariformSettings ++ Seq(
       ScalariformKeys.preferences in Compile := preferences,
       ScalariformKeys.preferences in Test := preferences
     )
