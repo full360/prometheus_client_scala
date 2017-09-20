@@ -34,6 +34,7 @@ object Dependencies {
     "org.scala-lang" % "scala-reflect" % Versions.reflect % "compile",
 
     // Test
+    "junit" % "junit" % "4.12" % "test",
     "org.scalatest" %% "scalatest" % Versions.scalatest % "test",
     "org.mockito" % "mockito-core" % Versions.mockito % "test",
     "org.hamcrest" % "hamcrest-all" % Versions.hamcrest % "test",

@@ -20,6 +20,7 @@
  */
 
 import scalariform.formatter.preferences._
+
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import sbt.Keys._
@@ -31,10 +32,12 @@ object Settings {
   private lazy val base = Seq(
     name := "prometheus-client-scala",
     organization := "com.full360",
-    version := "0.6-SNAPSHOT",
+    version := "0.7-SNAPSHOT",
     licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
     homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
-    scalaVersion := "2.12.3",
+    //scalaVersion := "2.12.3",
+    scalaVersion := "2.11.11",
+    crossScalaVersions := Seq("2.11.11", "2.12.3"),
     scalacOptions := Seq(
       "-deprecation",
       "-encoding", "UTF-8",
