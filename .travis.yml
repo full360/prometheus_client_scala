@@ -11,7 +11,7 @@ cache:
     - $HOME/.ivy2
 
 script:
-  - sbt +compile +test
+  - sbt ++$TRAVIS_SCALA_VERSION compile test
 
 before_cache:
   # Tricks to avoid unnecessary cache updates
@@ -23,7 +23,7 @@ before_install:
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .pubring.gpg.enc -out .pubring.gpg -d
 
 after_success:
-  - '[ "${TRAVIS_BRANCH}" = "master" ] && sbt +publishSigned || true'
+  - '[ "${TRAVIS_BRANCH}" = "master" ] && sbt ++$TRAVIS_SCALA_VERSION publishSigned || true'
 
 jdk:
    - oraclejdk8
