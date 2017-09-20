@@ -28,6 +28,7 @@ object Dependencies {
   def apply() = Seq(libraryDependencies ++= Seq(
     // Core
     "io.prometheus" % "simpleclient" % Versions.prometheus % "provided",
+    "io.prometheus" % "simpleclient_common" % Versions.prometheus % "provided",
     "io.prometheus" % "simpleclient_hotspot" % Versions.prometheus % "provided",
     "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile",
 
