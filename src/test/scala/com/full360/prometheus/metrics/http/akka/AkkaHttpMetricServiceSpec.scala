@@ -26,13 +26,27 @@ import com.full360.prometheus.BaseSpec
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 
-class AkkaHttpMetricServiceSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpMetricService {
-
+class AkkaHttpMetricServiceSpec extends BaseSpec with ScalatestRouteTest {
   "Akka Http" should provide {
-    "an endpoint" which {
-      "expose the metric registry" in {
+    "a default endpoint" which {
+      "exposes the metric registry" in {
+        val promeService = new AkkaHttpMetricService {}
 
-        Get("/metrics") ~> route ~> check {
+        Get("/metrics") ~> promeService.route ~> check {
+          handled shouldBe true
+          responseAs[String] shouldBe ""
+          status shouldBe StatusCodes.OK
+        }
+      }
+    }
+
+    "a custom endpoint" which {
+      "exposes the metric registry" in {
+        val promService = new AkkaHttpMetricService {
+          override val metricsBasePath: String = "metricsv1"
+        }
+
+        Get("/metricsv1") ~> promService.route ~> check {
           handled shouldBe true
           responseAs[String] shouldBe ""
           status shouldBe StatusCodes.OK
