@@ -21,26 +21,22 @@
 
 package com.full360.prometheus.metrics.http.akka
 
-import com.full360.prometheus.Metric
-import akka.http.scaladsl.server.Directives.{ complete, get, path }
-import akka.http.scaladsl.server.{ PathMatchers, Route }
+import com.full360.prometheus.BaseSpec
 
-object AkkaHttpMetricService {
-  private[akka] def metricsBase(path: String) = PathMatchers.separateOnSlashes(path)
-}
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.testkit.ScalatestRouteTest
 
-trait AkkaHttpMetricConfig {
-  def metricsBasePath: String = "metrics"
-}
+class AkkaHttpMetricSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpMetric {
 
-trait AkkaHttpMetricService extends AkkaHttpMetricConfig {
-  import AkkaHttpMetricService._
+  "Akka Http" should provide {
+    "an endpoint" which {
+      "expose the metric registry" in {
 
-  def route: Route = {
-    val base = metricsBase(metricsBasePath)
-    path(base) {
-      get {
-        complete(Metric.getRegistry)
+        Get("/metrics") ~> metric ~> check {
+          handled shouldBe true
+          responseAs[String] shouldBe ""
+          status shouldBe StatusCodes.OK
+        }
       }
     }
   }
