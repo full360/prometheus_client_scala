@@ -19,16 +19,38 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.Prometheus
+import com.full360.prometheus.http.HttpSummary
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import scala.concurrent.duration._
+
+import akka.http.scaladsl.server.Directive0
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
+
+trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
+
+  def summary: Directive0 = summaryPath()
+
+  def summaryPath(uri: String = ""): Directive0 =
+    extractRequestContext.flatMap { context ⇒
+
+      val startTime = System.nanoTime()
+
+      mapResponse { response ⇒
+
+        val endTime = System.nanoTime()
+        val elapsedTime = new FiniteDuration(endTime - startTime, NANOSECONDS)
+
+        val (method, code, path) = extract(uri, context, response)
+
+        Prometheus
+          .summary(summaryName, summaryHelp, summaryNamespace, summaryLabels)
+          .labels(method, code, path)
+          .observe(elapsedTime.toUnit(summaryTimeUnit))
+
+        response
+      }
+    } & handleExceptions(exceptionHandler(uri))
 }

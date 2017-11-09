@@ -19,16 +19,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360
 
-object Resolvers {
+package object prometheus {
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+  implicit class MapUtils[A, B](map: Map[A, B]) {
+
+    def toKeySeq: Seq[A] = map
+      .map { case (key, _) => key }
+      .toSeq
+
+    def toValueSeq: Seq[B] = map
+      .map { case (_, value) => value }
+      .toSeq
+  }
+
 }

@@ -19,16 +19,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.http.HttpGauge
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finatra.http.routing.HttpRouter
+
+class FinatraGaugeSpec extends FinatraBaseSpec with HttpGauge {
+
+  override def configureHttp(router: HttpRouter) = {
+    router
+      .filter[FinatraGauge]
+      .add[FinatraMetric]
+  }
+
+  test("Gauge metric should provide a gauge filter for Finatra which increase and decrease by 1") {
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  =
+        s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
+           |# TYPE ${gaugeNamespace}_$gaugeName gauge
+           |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 1.0
+           |""".stripMargin
+    )
+    registryShouldBe(
+      s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
+         |# TYPE ${gaugeNamespace}_$gaugeName gauge
+         |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 0.0
+         |""".stripMargin
+    )
+  }
 }

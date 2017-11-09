@@ -19,16 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.BaseSpec
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.testkit.ScalatestRouteTest
+
+class AkkaHttpMetricServiceSpec extends BaseSpec with ScalatestRouteTest {
+  "Akka Http" should provide {
+    "a default endpoint" which {
+      "exposes the metric registry" in {
+        val promeService = new AkkaHttpMetricService {}
+
+        Get("/metrics") ~> promeService.route ~> check {
+          handled shouldBe true
+          responseAs[String] shouldBe ""
+          status shouldBe StatusCodes.OK
+        }
+      }
+    }
+
+    "a custom endpoint" which {
+      "exposes the metric registry" in {
+        val promService = new AkkaHttpMetricService {
+          override val metricsBasePath: String = "metricsv1"
+        }
+
+        Get("/metricsv1") ~> promService.route ~> check {
+          handled shouldBe true
+          responseAs[String] shouldBe ""
+          status shouldBe StatusCodes.OK
+        }
+      }
+    }
+  }
 }
