@@ -120,7 +120,6 @@ object Prometheus extends Registry {
       f
     }
   }
-  // @formatter:on
 
   private[this] def prometheusCounterFuture[R](name: String, help: String, namespace: String, labels: Map[String, String])(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
     val metric = counter(name, help, namespace, labels).labels(labels.toValueSeq: _*)
@@ -159,7 +158,6 @@ object Prometheus extends Registry {
     }
   }
 
-  // @formatter:off
   sealed trait Metric
 
   case object Gauge extends Metric
