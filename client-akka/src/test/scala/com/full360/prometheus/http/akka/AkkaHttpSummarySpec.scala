@@ -19,40 +19,43 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
-import com.full360.prometheus.BaseSpec
+import com.full360.prometheus.{ BaseSpec, Prometheus }
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
+import org.scalactic.TolerantNumerics
 
-class AkkaHttpGaugeSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpGauge {
+class AkkaHttpSummarySpec extends BaseSpec with ScalatestRouteTest with AkkaHttpSummary {
+
+  implicit val doubleEq = TolerantNumerics.tolerantDoubleEquality(200.0)
 
   val route =
-    gauge {
+    summary {
       pathSingleSlash {
         get {
-          registryShouldBe(
-            s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
-               |# TYPE ${gaugeNamespace}_$gaugeName gauge
-               |${gaugeNamespace}_$gaugeName{method="get",path="/",} 1.0
-               |""".stripMargin
-          )
-
           complete("foo")
         }
       }
     }
 
-  "Gauge metric" should provide {
-    "a gauge DSL for Akka Http" which {
-      "increase and decrease by 1" in {
+  "Summary metric" should provide {
+    "a summary DSL for Akka Http" which {
+      "tracks the time an endpoint consumes" in {
         Get() ~> route ~> check {
           responseAs[String] shouldBe "foo"
+
+          val array = Prometheus.getRegistry.replace('\n', ' ').split(' ')
+
           registryShouldBe(
-            s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
-               |# TYPE ${gaugeNamespace}_$gaugeName gauge
-               |${gaugeNamespace}_$gaugeName{method="get",path="/",} 0.0
+            s"""# HELP ${summaryNamespace}_$summaryName $summaryHelp
+               |# TYPE ${summaryNamespace}_$summaryName summary
+               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.5",} ${array(16)}
+               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.9",} ${array(18)}
+               |${summaryNamespace}_$summaryName{method="get",code="200",path="/",quantile="0.99",} ${array(20)}
+               |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/",} ${array(22)}
+               |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/",} ${array(24)}
                |""".stripMargin
           )
         }

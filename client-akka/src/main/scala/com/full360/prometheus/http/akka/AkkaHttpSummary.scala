@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
 import com.full360.prometheus.Prometheus
 import com.full360.prometheus.http.HttpSummary

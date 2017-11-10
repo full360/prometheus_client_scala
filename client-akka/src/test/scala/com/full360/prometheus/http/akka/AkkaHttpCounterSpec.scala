@@ -19,37 +19,44 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
 import com.full360.prometheus.BaseSpec
 
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 
-class AkkaHttpMetricServiceSpec extends BaseSpec with ScalatestRouteTest {
-  "Akka Http" should provide {
-    "a default endpoint" which {
-      "exposes the metric registry" in {
-        val promeService = new AkkaHttpMetricService {}
+class AkkaHttpCounterSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpCounter {
 
-        Get("/metrics") ~> promeService.route ~> check {
-          handled shouldBe true
-          responseAs[String] shouldBe ""
-          status shouldBe StatusCodes.OK
+  val route =
+    counter {
+      pathSingleSlash {
+        get {
+          complete("foo")
         }
       }
     }
 
-    "a custom endpoint" which {
-      "exposes the metric registry" in {
-        val promService = new AkkaHttpMetricService {
-          override val metricsBasePath: String = "metricsv1"
-        }
+  "Counter metric" should provide {
+    "a counter DSL for Akka Http" which {
+      "increase the counter by 1" in {
+        Get() ~> route ~> check {
+          responseAs[String] shouldBe "foo"
+          registryShouldBe(
+            s"""# HELP ${counterNamespace}_$counterName $counterHelp
+               |# TYPE ${counterNamespace}_$counterName counter
+               |${counterNamespace}_$counterName{method="get",code="200",path="/",} 1.0
+               |""".stripMargin
+          )
 
-        Get("/metricsv1") ~> promService.route ~> check {
-          handled shouldBe true
-          responseAs[String] shouldBe ""
-          status shouldBe StatusCodes.OK
+          Get() ~> route ~> check {
+            registryShouldBe(
+              s"""# HELP ${counterNamespace}_$counterName $counterHelp
+                 |# TYPE ${counterNamespace}_$counterName counter
+                 |${counterNamespace}_$counterName{method="get",code="200",path="/",} 2.0
+                 |""".stripMargin
+            )
+          }
         }
       }
     }

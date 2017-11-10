@@ -19,38 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
 import com.full360.prometheus.Prometheus
-import com.full360.prometheus.http.HttpHistogram
 
-import scala.concurrent.duration._
+import akka.http.scaladsl.server.Directives.{ complete, get, path }
+import akka.http.scaladsl.server.{ PathMatchers, Route }
 
-import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
+object AkkaHttpMetricService {
 
-trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
+  private[akka] def metricsBase(path: String) = PathMatchers.separateOnSlashes(path)
+}
 
-  def histogram: Directive0 = histogramPath()
+trait AkkaHttpMetricConfig {
 
-  def histogramPath(uri: String = ""): Directive0 =
-    extractRequestContext.flatMap { context ⇒
+  def metricsBasePath: String = "metrics"
+}
 
-      val startTime = System.nanoTime()
+trait AkkaHttpMetricService extends AkkaHttpMetricConfig {
 
-      mapResponse { response ⇒
+  import AkkaHttpMetricService._
 
-        val endTime = System.nanoTime()
-        val elapsedTime = new FiniteDuration(endTime - startTime, NANOSECONDS)
-
-        val (method, path) = extract(uri, context)
-
-        Prometheus
-          .histogram(histogramName, histogramHelp, histogramNamespace, histogramLabels, histogramBuckets)
-          .labels(method, path)
-          .observe(elapsedTime.toUnit(histogramTimeUnit))
-
-        response
+  def route: Route = {
+    val base = metricsBase(metricsBasePath)
+    path(base) {
+      get {
+        complete(Prometheus.getRegistry)
       }
-    } & handleExceptions(exceptionHandler(uri))
+    }
+  }
 }

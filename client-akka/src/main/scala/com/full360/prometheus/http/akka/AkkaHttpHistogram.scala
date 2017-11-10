@@ -19,41 +19,38 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
 import com.full360.prometheus.Prometheus
-import com.full360.prometheus.http.HttpCounter
+import com.full360.prometheus.http.HttpHistogram
 
-import akka.http.scaladsl.model.HttpRequest
+import scala.concurrent.duration._
+
 import akka.http.scaladsl.server.Directive0
 import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
 
-trait AkkaHttpCounter extends HttpCounter with AkkaHttp {
+trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
 
-  def counter: Directive0 = counterPath()
+  def histogram: Directive0 = histogramPath()
 
-  def counterPath(uri: String = ""): Directive0 =
+  def histogramPath(uri: String = ""): Directive0 =
     extractRequestContext.flatMap { context ⇒
+
+      val startTime = System.nanoTime()
+
       mapResponse { response ⇒
 
-        val (method, code, path) = extract(uri, context, response)
+        val endTime = System.nanoTime()
+        val elapsedTime = new FiniteDuration(endTime - startTime, NANOSECONDS)
+
+        val (method, path) = extract(uri, context)
 
         Prometheus
-          .counter(counterName, counterHelp, counterNamespace, counterLabels)
-          .labels(method, code, path)
-          .inc()
+          .histogram(histogramName, histogramHelp, histogramNamespace, histogramLabels, histogramBuckets)
+          .labels(method, path)
+          .observe(elapsedTime.toUnit(histogramTimeUnit))
 
         response
       }
     } & handleExceptions(exceptionHandler(uri))
-
-  override def onError(uri: String, request: HttpRequest, throwable: Throwable) = {
-
-    val (method, path) = extract(uri, request)
-
-    Prometheus
-      .counter(counterName, counterHelp, counterNamespace, counterLabels)
-      .labels(method, 500 toString, path)
-      .inc()
-  }
 }

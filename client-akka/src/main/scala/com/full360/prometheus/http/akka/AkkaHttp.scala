@@ -19,33 +19,41 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
-import com.full360.prometheus.Prometheus
+import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
+import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.{ ExceptionHandler, RequestContext }
 
-import akka.http.scaladsl.server.Directives.{ complete, get, path }
-import akka.http.scaladsl.server.{ PathMatchers, Route }
+trait AkkaHttp {
 
-object AkkaHttpMetricService {
+  def extract(uri: String, context: RequestContext, response: HttpResponse): (String, String, String) = {
+    val (method, path) = extract(uri, context)
+    val code = response.status.intValue().toString
 
-  private[finatra] def metricsBase(path: String) = PathMatchers.separateOnSlashes(path)
-}
+    (method, code, path)
+  }
 
-trait AkkaHttpMetricConfig {
+  def extract(uri: String, context: RequestContext): (String, String) = {
+    extract(uri, context.request)
+  }
 
-  def metricsBasePath: String = "metrics"
-}
+  def extract(uri: String, request: HttpRequest): (String, String) = {
+    val path = uri match {
+      case ""    => request.uri.path.toString()
+      case value => value
+    }
+    val method = request.method.value.toLowerCase
 
-trait AkkaHttpMetricService extends AkkaHttpMetricConfig {
+    method -> path
+  }
 
-  import AkkaHttpMetricService._
-
-  def route: Route = {
-    val base = metricsBase(metricsBasePath)
-    path(base) {
-      get {
-        complete(Prometheus.getRegistry)
-      }
+  def exceptionHandler(uri: String) = ExceptionHandler {
+    case throwable: Throwable => extractRequest { request ⇒
+      onError(uri, request, throwable)
+      throw throwable
     }
   }
+
+  def onError(uri: String, request: HttpRequest, throwable: Throwable) = {}
 }

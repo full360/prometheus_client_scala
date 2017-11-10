@@ -19,31 +19,39 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.full360.prometheus.http.finatra
+package com.full360.prometheus.http.akka
 
-import com.full360.prometheus.Prometheus
-import com.full360.prometheus.http.HttpGauge
+import com.full360.prometheus.BaseSpec
 
-import akka.http.scaladsl.server.Directive0
-import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
+import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.testkit.ScalatestRouteTest
 
-trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
+class AkkaHttpMetricServiceSpec extends BaseSpec with ScalatestRouteTest {
+  "Akka Http" should provide {
+    "a default endpoint" which {
+      "exposes the metric registry" in {
+        val promeService = new AkkaHttpMetricService {}
 
-  def gauge: Directive0 = gaugePath()
-
-  def gaugePath(uri: String = ""): Directive0 =
-    extractRequestContext.flatMap { context ⇒
-      val (method, path) = extract(uri, context)
-
-      val gauge = Prometheus
-        .gauge(gaugeName, gaugeHelp, gaugeNamespace, gaugeLabels)
-        .labels(method, path)
-
-      gauge.inc()
-
-      mapResponse { response ⇒
-        gauge.dec()
-        response
+        Get("/metrics") ~> promeService.route ~> check {
+          handled shouldBe true
+          responseAs[String] shouldBe ""
+          status shouldBe StatusCodes.OK
+        }
       }
-    } & handleExceptions(exceptionHandler(uri))
+    }
+
+    "a custom endpoint" which {
+      "exposes the metric registry" in {
+        val promService = new AkkaHttpMetricService {
+          override val metricsBasePath: String = "metricsv1"
+        }
+
+        Get("/metricsv1") ~> promService.route ~> check {
+          handled shouldBe true
+          responseAs[String] shouldBe ""
+          status shouldBe StatusCodes.OK
+        }
+      }
+    }
+  }
 }
