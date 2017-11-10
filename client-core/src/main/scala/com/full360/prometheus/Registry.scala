@@ -53,7 +53,7 @@ trait Registry {
     registry.clear()
   }
 
-  def addJVM(): Unit = {
+  def addJVMMetrics(): Unit = {
     new StandardExports().register[Collector](registry)
     new MemoryPoolsExports().register[Collector](registry)
     new GarbageCollectorExports().register[Collector](registry)
