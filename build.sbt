@@ -1,10 +1,16 @@
 lazy val root = (project in file("."))
   .aggregate(core, akka, finatra)
-  .settings(Settings())
+  .settings(Settings() ++ Seq(
+    publishArtifact := false,
+    publishTo := Some(Resolver.file("Unused transient repository", file("target/unusedrepo"))),
+    publishLocal := {},
+    publish := {})
+  )
   .settings(name := "prometheus-client-scala")
 
 lazy val core = (project in file("client-core"))
   .settings(Settings())
+  .settings(Publish())
   .settings(name := "prometheus-client-scala-core")
   .settings(libraryDependencies ++= {
     import Dependencies._
@@ -16,6 +22,7 @@ lazy val core = (project in file("client-core"))
 lazy val akka = (project in file("client-akka"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(Settings())
+  .settings(Publish())
   .settings(name := "prometheus-client-scala-akka-http")
   .settings(libraryDependencies ++= {
     import Dependencies._
@@ -27,6 +34,7 @@ lazy val akka = (project in file("client-akka"))
 lazy val finatra = (project in file("client-finatra"))
   .dependsOn(core % "compile->compile;test->test")
   .settings(Settings())
+  .settings(Publish())
   .settings(name := "prometheus-client-scala-finatra")
   .settings(libraryDependencies ++= {
     import Dependencies._
