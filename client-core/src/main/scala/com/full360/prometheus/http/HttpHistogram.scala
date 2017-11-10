@@ -19,16 +19,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http
 
-object Resolvers {
+import scala.concurrent.duration.SECONDS
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+trait HttpHistogram {
+
+  val histogramNamespace = "http_server"
+  val histogramName = "request_duration_seconds"
+  val histogramHelp = "An histogram for HTTP response duration in seconds"
+  val histogramLabels = Map("method" -> "", "path" -> "")
+  val histogramTimeUnit = SECONDS
+  val histogramBuckets = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0)
 }

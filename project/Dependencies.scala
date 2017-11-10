@@ -19,55 +19,47 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt.Keys._
 import sbt._
 
 object Dependencies {
 
+  val prometheusClient  = "io.prometheus"      % "simpleclient"         % Versions.prometheus
+  val prometheusCommon  = "io.prometheus"      % "simpleclient_common"  % Versions.prometheus
+  val prometheusHotspot = "io.prometheus"      % "simpleclient_hotspot" % Versions.prometheus
+  val scalatest         = "org.scalatest"     %% "scalatest"            % Versions.scalatest
+  val mockito           = "org.mockito"        % "mockito-core"         % Versions.mockito
+  val junit             = "junit"              % "junit"                % Versions.junit
+  val akkaHttp          = "com.typesafe.akka" %% "akka-http"            % Versions.akka
+  val akkaHttpTest      = "com.typesafe.akka" %% "akka-http-testkit"    % Versions.akka
+  val finatraHttp       = "com.twitter"       %% "finatra-http"         % Versions.finatra
+  val finatraHttpTest   = "com.twitter"       %% "finatra-http"         % Versions.finatra
+  val finatraTestCore   = "com.twitter"       %% "inject-core"          % Versions.finatra
+  val finatraTestServer = "com.twitter"       %% "inject-server"        % Versions.finatra
+  val finatraTestApp    = "com.twitter"       %% "inject-app"           % Versions.finatra
+  val finatraTestModules= "com.twitter"       %% "inject-modules"       % Versions.finatra
+  val finatraTestGuice  = "com.google.inject.extensions" % "guice-testlib" % Versions.guice
+
   // @formatter:off
-  def apply() = Seq(libraryDependencies ++= Seq(
-    // Core
-    "io.prometheus" % "simpleclient" % Versions.prometheus % "provided",
-    "io.prometheus" % "simpleclient_common" % Versions.prometheus % "provided",
-    "io.prometheus" % "simpleclient_hotspot" % Versions.prometheus % "provided",
-    "org.scala-lang" % "scala-reflect" % scalaVersion.value % "compile",
+  def compile       (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "compile")
 
-    // Test
-    "junit" % "junit" % "4.12" % "test",
-    "org.scalatest" %% "scalatest" % Versions.scalatest % "test",
-    "org.mockito" % "mockito-core" % Versions.mockito % "test",
-    "org.hamcrest" % "hamcrest-all" % Versions.hamcrest % "test",
-    "org.specs2" %% "specs2-core" % Versions.specs2 % "test",
+  def provided      (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "provided")
 
-    // Akka Http
-    "com.typesafe.akka" %% "akka-http" % Versions.akka % "provided",
-    "com.typesafe.akka" %% "akka-http-testkit" % Versions.akka % "test",
+  def runtime       (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "runtime")
 
-    // Finatra
-    "com.twitter" %% "finatra-http" % Versions.finatra % "provided",
-    "com.twitter" %% "finatra-http" % Versions.finatra % "test",
-    "com.twitter" %% "finatra-http" % Versions.finatra % "test" classifier "tests",
-    "com.twitter" %% "inject-server" % Versions.finatra % "test",
-    "com.twitter" %% "inject-server" % Versions.finatra % "test" classifier "tests",
-    "com.twitter" %% "inject-app" % Versions.finatra % "test",
-    "com.twitter" %% "inject-app" % Versions.finatra % "test" classifier "tests",
-    "com.twitter" %% "inject-core" % Versions.finatra % "test",
-    "com.twitter" %% "inject-core" % Versions.finatra % "test" classifier "tests",
-    "com.twitter" %% "inject-modules" % Versions.finatra % "test",
-    "com.twitter" %% "inject-modules" % Versions.finatra % "test" classifier "tests",
+  def container     (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "container")
 
-    "com.google.inject.extensions" % "guice-testlib" % Versions.guice % "test"
-  ))
+  def testClassifier(deps: ModuleID*): Seq[ModuleID] = test(deps: _*) map(_ classifier "tests")
+
+  def test          (deps: ModuleID*): Seq[ModuleID] = deps map (_ % "test")
 
   private[this] object Versions {
-    val prometheus = "0.0.26"
-    val akka = "10.0.9"
-    val finatra = "2.13.0"
-    val scalatest = "3.0.4"
-    val mockito = "1.9.5"
-    val hamcrest = "1.3"
-    val specs2 = "4.0.0-RC2"
-    val guice = "4.1.0"
+    val prometheus  = "0.0.26"
+    val akka        = "10.0.9"
+    val finatra     = "2.13.0"
+    val scalatest   = "3.0.4"
+    val mockito     = "1.9.5"
+    val junit       = "4.12"
+    val guice       = "4.1.0"
   }
   // @formatter:on
 }

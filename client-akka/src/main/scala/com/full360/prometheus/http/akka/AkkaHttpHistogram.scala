@@ -19,16 +19,38 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.akka
 
-object Resolvers {
+import com.full360.prometheus.Prometheus
+import com.full360.prometheus.http.HttpHistogram
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import scala.concurrent.duration._
+
+import akka.http.scaladsl.server.Directive0
+import akka.http.scaladsl.server.Directives.{ extractRequestContext, handleExceptions, mapResponse }
+
+trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
+
+  def histogram: Directive0 = histogramPath()
+
+  def histogramPath(uri: String = ""): Directive0 =
+    extractRequestContext.flatMap { context ⇒
+
+      val startTime = System.nanoTime()
+
+      mapResponse { response ⇒
+
+        val endTime = System.nanoTime()
+        val elapsedTime = new FiniteDuration(endTime - startTime, NANOSECONDS)
+
+        val (method, path) = extract(uri, context)
+
+        Prometheus
+          .histogram(histogramName, histogramHelp, histogramNamespace, histogramLabels, histogramBuckets)
+          .labels(method, path)
+          .observe(elapsedTime.toUnit(histogramTimeUnit))
+
+        response
+      }
+    } & handleExceptions(exceptionHandler(uri))
 }

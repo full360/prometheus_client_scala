@@ -19,16 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.http.HttpCounter
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import com.twitter.finagle.http.Status.Ok
+import com.twitter.finatra.http.routing.HttpRouter
+
+class FinatraCounterSpec extends FinatraBaseSpec with HttpCounter {
+
+  override def configureHttp(router: HttpRouter) = {
+    router
+      .filter[FinatraCounter]
+      .add[FinatraMetric]
+  }
+
+  test("Counter metric should provide a counter filter for Finatra which increase by 1") {
+    server.httpGet(
+      path      = "/metrics",
+      andExpect = Ok,
+      withBody  = ""
+    )
+
+    registryShouldBe(
+      s"""# HELP ${counterNamespace}_$counterName $counterHelp
+         |# TYPE ${counterNamespace}_$counterName counter
+         |${counterNamespace}_$counterName{method="get",code="200",path="/metrics",} 1.0
+         |""".stripMargin
+    )
+  }
 }

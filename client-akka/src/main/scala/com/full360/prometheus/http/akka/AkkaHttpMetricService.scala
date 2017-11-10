@@ -19,16 +19,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.akka
 
-object Resolvers {
+import com.full360.prometheus.Prometheus
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import akka.http.scaladsl.server.Directives.{ complete, get, path }
+import akka.http.scaladsl.server.{ PathMatchers, Route }
+
+object AkkaHttpMetricService {
+
+  private[akka] def metricsBase(path: String) = PathMatchers.separateOnSlashes(path)
+}
+
+trait AkkaHttpMetricConfig {
+
+  def metricsBasePath: String = "metrics"
+}
+
+trait AkkaHttpMetricService extends AkkaHttpMetricConfig {
+
+  import AkkaHttpMetricService._
+
+  def route: Route = {
+    val base = metricsBase(metricsBasePath)
+    path(base) {
+      get {
+        complete(Prometheus.getRegistry)
+      }
+    }
+  }
 }

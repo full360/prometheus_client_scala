@@ -19,16 +19,38 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http.finatra
 
-object Resolvers {
+import com.full360.prometheus.Prometheus
+import com.full360.prometheus.http.HttpHistogram
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+import scala.concurrent.duration
+import scala.concurrent.duration.FiniteDuration
+
+import com.twitter.finagle.http.{ Request, Response }
+import com.twitter.finagle.{ Service, SimpleFilter }
+
+class FinatraHistogram extends SimpleFilter[Request, Response] with HttpHistogram with Finatra {
+
+  override def apply(request: Request, service: Service[Request, Response]) = {
+
+    val startTime = System.nanoTime()
+
+    def observe[A](result: A) = {
+
+      val endTime = System.nanoTime()
+      val elapsedTime = new FiniteDuration(endTime - startTime, duration.NANOSECONDS)
+
+      val (method, path, _) = extract(request, None)
+
+      Prometheus
+        .histogram(histogramName, histogramHelp, histogramNamespace, histogramLabels, histogramBuckets)
+        .labels(method, path)
+        .observe(elapsedTime.toUnit(histogramTimeUnit))
+    }
+
+    service(request)
+      .onSuccess(observe)
+      .onFailure(observe)
+  }
 }

@@ -30,9 +30,9 @@ import sbtassembly.AssemblyKeys._
 object Settings {
 
   private lazy val base = Seq(
-    name := "prometheus-client-scala",
+    resolvers := Resolvers(),
     organization := "com.full360",
-    version := "0.7.1-SNAPSHOT",
+    version := "0.8.0",
     scalaVersion := "2.11.11",
     crossScalaVersions := Seq("2.11.11", "2.12.3"),
     scalacOptions := Seq(
@@ -55,9 +55,7 @@ object Settings {
       "-Ywarn-unused-import"
     ),
     shellPrompt := { s => s"${Project.extract(s).currentProject.id} > " },
-    parallelExecution in Test := false,
-
-    addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+    parallelExecution in Test := false
   )
 
   private lazy val assemble = Seq(

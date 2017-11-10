@@ -19,16 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import sbt._
+package com.full360.prometheus.http
 
-object Resolvers {
+import scala.concurrent.duration.SECONDS
 
-  def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
-    "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
-  )
+trait HttpSummary {
+
+  val summaryNamespace = "http_server"
+  val summaryName = "request_duration_seconds"
+  val summaryHelp = "A summary for HTTP response duration in seconds"
+  val summaryLabels = Map("method" -> "", "code" -> "", "path" -> "")
+  val summaryTimeUnit = SECONDS
 }
