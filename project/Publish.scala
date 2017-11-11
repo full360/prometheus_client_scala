@@ -36,8 +36,8 @@ object Publish {
     <url>https://github.com/full360/prometheus_client_scala</url>
     <licenses>
       <license>
-        <name>MIT License</name>
-        <url>http://www.opensource.org/licenses/mit-license.php</url>
+        <name>The MIT License</name>
+        <url>https://opensource.org/licenses/MIT</url>
       </license>
     </licenses>
     <scm>
@@ -63,9 +63,6 @@ object Publish {
       else
         Opts.resolver.sonatypeStaging
     ),
-
-    licenses := Seq("The MIT License" -> url("https://opensource.org/licenses/MIT")),
-    homepage := Some(url("https://github.com/full360/prometheus_client_scala")),
 
     credentials += credential,
 
