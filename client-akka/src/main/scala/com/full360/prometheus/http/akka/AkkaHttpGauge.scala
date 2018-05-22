@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -36,7 +36,7 @@ trait AkkaHttpGauge extends HttpGauge with AkkaHttp {
       val (method, path) = extract(uri, context)
 
       val gauge = Prometheus
-        .gauge(gaugeName, gaugeHelp, gaugeNamespace, gaugeLabels)
+        .gauge(gaugeName, gaugeHelp, gaugeNamespace, gaugeLabels: _*)
         .labels(method, path)
 
       gauge.inc()

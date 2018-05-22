@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -46,7 +46,7 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusGauge[R](name: String, help: String, namespace: String, labels: Map[String, String])(block: => R): R = {
-    val metric = gauge(name, help, namespace, labels).labels(labels.toValueSeq: _*)
+    val metric = gauge(name, help, namespace, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
 
     metric.inc()
 
@@ -58,14 +58,14 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusCounter[R](name: String, help: String, namespace: String, labels: Map[String, String])(block: => R): R = {
-    val metric = counter(name, help, namespace, labels).labels(labels.toValueSeq: _*)
+    val metric = counter(name, help, namespace, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
 
     metric.inc()
     block
   }
 
   private[this] def prometheusSummary[R](name: String, help: String, namespace: String, labels: Map[String, String], timeUnit: TimeUnit)(block: => R): R = {
-    val metric = summary(name, help, namespace, labels).labels(labels.toValueSeq: _*)
+    val metric = summary(name, help, namespace, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
     val startTime = System.nanoTime()
 
     try {
@@ -79,7 +79,7 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusHistogram[R](name: String, help: String, namespace: String, labels: Map[String, String], timeUnit: TimeUnit, buckets: Seq[Double])(block: => R): R = {
-    val metric = histogram(name, help, namespace, labels, buckets).labels(labels.toValueSeq: _*)
+    val metric = histogram(name, help, namespace, buckets, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
     val startTime = System.nanoTime()
 
     try {
@@ -111,7 +111,7 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusGaugeFuture[R](name: String, help: String, namespace: String, labels: Map[String, String])(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
-    val metric = gauge(name, help, namespace, labels).labels(labels.toValueSeq: _*)
+    val metric = gauge(name, help, namespace, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
 
     metric.inc()
 
@@ -122,7 +122,7 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusCounterFuture[R](name: String, help: String, namespace: String, labels: Map[String, String])(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
-    val metric = counter(name, help, namespace, labels).labels(labels.toValueSeq: _*)
+    val metric = counter(name, help, namespace, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
 
     block.map { f =>
       metric.inc()
@@ -131,7 +131,7 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusSummaryFuture[R](name: String, help: String, namespace: String, labels: Map[String, String], timeUnit: TimeUnit)(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
-    val metric = summary(name, help, namespace, labels).labels(labels.toValueSeq: _*)
+    val metric = summary(name, help, namespace, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
     val startTime = System.nanoTime()
 
     block.map { f =>
@@ -145,7 +145,7 @@ object Prometheus extends Registry {
   }
 
   private[this] def prometheusHistogramFuture[R](name: String, help: String, namespace: String, labels: Map[String, String], timeUnit: TimeUnit, buckets: Seq[Double])(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
-    val metric = histogram(name, help, namespace, labels, buckets).labels(labels.toValueSeq: _*)
+    val metric = histogram(name, help, namespace, buckets, labels.toKeySeq: _*).labels(labels.toValueSeq: _*)
     val startTime = System.nanoTime()
 
     block.map { f =>

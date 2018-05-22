@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -62,42 +62,42 @@ trait Registry {
     new VersionInfoExports().register[Collector](registry)
   }
 
-  def gauge(name: String, help: String, namespace: String, labels: Map[String, String]): Gauge = synchronized {
+  def gauge(name: String, help: String, namespace: String, labels: String*): Gauge = synchronized {
     gauges.getOrElseUpdate(s"${namespace}_$name", Gauge.build()
       .name(name)
       .help(help)
       .namespace(namespace)
-      .labelNames(labels.toKeySeq: _*)
+      .labelNames(labels: _*)
       .register(registry))
   }
 
-  def counter(name: String, help: String, namespace: String, labels: Map[String, String]): Counter = synchronized {
+  def counter(name: String, help: String, namespace: String, labels: String*): Counter = synchronized {
     counters.getOrElseUpdate(s"${namespace}_$name", Counter.build()
       .name(name)
       .help(help)
       .namespace(namespace)
-      .labelNames(labels.toKeySeq: _*)
+      .labelNames(labels: _*)
       .register(registry))
   }
 
-  def summary(name: String, help: String, namespace: String, labels: Map[String, String]): Summary = synchronized {
+  def summary(name: String, help: String, namespace: String, labels: String*): Summary = synchronized {
     summaries.getOrElseUpdate(s"${namespace}_$name", Summary.build()
       .name(name)
       .help(help)
       .namespace(namespace)
-      .labelNames(labels.toKeySeq: _*)
+      .labelNames(labels: _*)
       .quantile(0.50, 0.05)
       .quantile(0.90, 0.01)
       .quantile(0.99, 0.01)
       .register(registry))
   }
 
-  def histogram(name: String, help: String, namespace: String, labels: Map[String, String], buckets: Seq[Double]): Histogram = synchronized {
+  def histogram(name: String, help: String, namespace: String, buckets: Seq[Double], labels: String*): Histogram = synchronized {
     histograms.getOrElseUpdate(s"${namespace}_$name", Histogram.build()
       .name(name)
       .help(help)
       .namespace(namespace)
-      .labelNames(labels.toKeySeq: _*)
+      .labelNames(labels: _*)
       .buckets(buckets: _*)
       .register(registry))
   }

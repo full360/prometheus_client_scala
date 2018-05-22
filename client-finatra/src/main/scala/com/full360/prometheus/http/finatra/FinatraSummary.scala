@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -27,11 +27,10 @@ import com.full360.prometheus.http.HttpSummary
 import scala.concurrent.duration
 import scala.concurrent.duration.FiniteDuration
 
-import javax.inject.{ Inject, Singleton }
-
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
 import com.twitter.finatra.http.exceptions.ExceptionManager
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class FinatraSummary @Inject() (exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpSummary with Finatra {
@@ -52,7 +51,7 @@ class FinatraSummary @Inject() (exceptionManager: ExceptionManager) extends Simp
       }
 
       Prometheus
-        .summary(summaryName, summaryHelp, summaryNamespace, summaryLabels)
+        .summary(summaryName, summaryHelp, summaryNamespace, summaryLabels: _*)
         .labels(method, code.getOrElse("500"), path)
         .observe(elapsedTime.toUnit(summaryTimeUnit))
 

@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -26,5 +26,5 @@ trait HttpGauge {
   val gaugeNamespace = "http_server"
   val gaugeName = "request_gauge"
   val gaugeHelp = "A gauge for http request"
-  val gaugeLabels = Map("method" -> "", "path" -> "")
+  val gaugeLabels = Seq("method", "path")
 }

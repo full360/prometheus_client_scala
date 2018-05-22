@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -24,11 +24,10 @@ package com.full360.prometheus.http.finatra
 import com.full360.prometheus.Prometheus
 import com.full360.prometheus.http.HttpCounter
 
-import javax.inject.{ Inject, Singleton }
-
 import com.twitter.finagle.http.{ Request, Response }
 import com.twitter.finagle.{ Service, SimpleFilter }
 import com.twitter.finatra.http.exceptions.ExceptionManager
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
 class FinatraCounter @Inject() (exceptionManager: ExceptionManager) extends SimpleFilter[Request, Response] with HttpCounter with Finatra {
@@ -39,7 +38,7 @@ class FinatraCounter @Inject() (exceptionManager: ExceptionManager) extends Simp
       val (method, path, code) = params
 
       Prometheus
-        .counter(counterName, counterHelp, counterNamespace, counterLabels)
+        .counter(counterName, counterHelp, counterNamespace, counterLabels: _*)
         .labels(method, code.getOrElse("500"), path)
         .inc()
     }
