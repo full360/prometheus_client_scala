@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -19,20 +19,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import scalariform.formatter.preferences._
-
 import com.typesafe.sbt.SbtScalariform
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import sbt.Keys._
 import sbt._
 import sbtassembly.AssemblyKeys._
+import scalariform.formatter.preferences._
 
 object Settings {
 
   private lazy val base = Seq(
     resolvers := Resolvers(),
     organization := "com.full360",
-    version := "0.8.0",
+    version := "0.8.1",
     scalaVersion := "2.11.11",
     crossScalaVersions := Seq("2.11.11", "2.12.3"),
     scalacOptions := Seq(
