@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -46,7 +46,7 @@ trait AkkaHttpSummary extends HttpSummary with AkkaHttp {
         val (method, code, path) = extract(uri, context, response)
 
         Prometheus
-          .summary(summaryName, summaryHelp, summaryNamespace, summaryLabels)
+          .summary(summaryName, summaryHelp, summaryNamespace, summaryLabels: _*)
           .labels(method, code, path)
           .observe(elapsedTime.toUnit(summaryTimeUnit))
 

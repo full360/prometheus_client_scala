@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -28,7 +28,7 @@ trait HttpHistogram {
   val histogramNamespace = "http_server"
   val histogramName = "request_duration_seconds"
   val histogramHelp = "An histogram for HTTP response duration in seconds"
-  val histogramLabels = Map("method" -> "", "path" -> "")
+  val histogramLabels = Seq("method", "path")
   val histogramTimeUnit = SECONDS
   val histogramBuckets = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0)
 }

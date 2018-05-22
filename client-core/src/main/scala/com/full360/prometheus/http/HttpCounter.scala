@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -26,5 +26,5 @@ trait HttpCounter {
   val counterNamespace = "http_server"
   val counterName = "requests_total"
   val counterHelp = "The total number of HTTP requests handled by the application"
-  val counterLabels = Map("method" -> "", "code" -> "", "path" -> "")
+  val counterLabels = Seq("method", "code", "path")
 }

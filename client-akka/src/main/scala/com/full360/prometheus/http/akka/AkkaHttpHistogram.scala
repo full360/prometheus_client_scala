@@ -1,5 +1,5 @@
 /*
- * Copyright © 2017 Full 360 Inc
+ * Copyright © 2018 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -46,7 +46,7 @@ trait AkkaHttpHistogram extends HttpHistogram with AkkaHttp {
         val (method, path) = extract(uri, context)
 
         Prometheus
-          .histogram(histogramName, histogramHelp, histogramNamespace, histogramLabels, histogramBuckets)
+          .histogram(histogramName, histogramHelp, histogramNamespace, histogramBuckets, histogramLabels: _*)
           .labels(method, path)
           .observe(elapsedTime.toUnit(histogramTimeUnit))
 
