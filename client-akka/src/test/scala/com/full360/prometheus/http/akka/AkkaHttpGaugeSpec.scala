@@ -36,8 +36,7 @@ class AkkaHttpGaugeSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpGa
             s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
                |# TYPE ${gaugeNamespace}_$gaugeName gauge
                |${gaugeNamespace}_$gaugeName{method="get",path="/",} 1.0
-               |""".stripMargin
-          )
+               |""".stripMargin)
 
           complete("foo")
         }
@@ -53,8 +52,7 @@ class AkkaHttpGaugeSpec extends BaseSpec with ScalatestRouteTest with AkkaHttpGa
             s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
                |# TYPE ${gaugeNamespace}_$gaugeName gauge
                |${gaugeNamespace}_$gaugeName{method="get",path="/",} 0.0
-               |""".stripMargin
-          )
+               |""".stripMargin)
         }
       }
     }

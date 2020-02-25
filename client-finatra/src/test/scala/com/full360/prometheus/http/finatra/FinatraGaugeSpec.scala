@@ -42,13 +42,11 @@ class FinatraGaugeSpec extends FinatraBaseSpec with HttpGauge {
         s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
            |# TYPE ${gaugeNamespace}_$gaugeName gauge
            |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 1.0
-           |""".stripMargin
-    )
+           |""".stripMargin)
     registryShouldBe(
       s"""# HELP ${gaugeNamespace}_$gaugeName $gaugeHelp
          |# TYPE ${gaugeNamespace}_$gaugeName gauge
          |${gaugeNamespace}_$gaugeName{method="get",path="/metrics",} 0.0
-         |""".stripMargin
-    )
+         |""".stripMargin)
   }
 }

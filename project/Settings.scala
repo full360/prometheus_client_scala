@@ -33,7 +33,7 @@ object Settings {
     organization := "com.full360",
     version := "0.8.4",
     scalaVersion := "2.12.8",
-    crossScalaVersions := Seq("2.11.11", "2.12.3"),
+    crossScalaVersions := Seq("2.11.11", "2.12.8"),
     scalacOptions := Seq(
       "-deprecation",
       "-encoding", "UTF-8",

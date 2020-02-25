@@ -42,8 +42,7 @@ class FinatraSummarySpec extends FinatraBaseSpec with HttpSummary {
     server.httpGet(
       path      = "/metrics",
       andExpect = Ok,
-      withBody  = ""
-    )
+      withBody  = "")
 
     val array = Prometheus.getRegistry.replace('\n', ' ').split(' ')
 
@@ -55,7 +54,6 @@ class FinatraSummarySpec extends FinatraBaseSpec with HttpSummary {
          |${summaryNamespace}_$summaryName{method="get",code="200",path="/metrics",quantile="0.99",} ${array(20)}
          |${summaryNamespace}_${summaryName}_count{method="get",code="200",path="/metrics",} ${array(22)}
          |${summaryNamespace}_${summaryName}_sum{method="get",code="200",path="/metrics",} ${array(24)}
-         |""".stripMargin
-    )
+         |""".stripMargin)
   }
 }
