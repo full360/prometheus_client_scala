@@ -42,8 +42,7 @@ class FinatraHistogramSpec extends FinatraBaseSpec with HttpHistogram {
     server.httpGet(
       path      = "/metrics",
       andExpect = Ok,
-      withBody  = ""
-    )
+      withBody  = "")
 
     val array = Prometheus.getRegistry.replace('\n', ' ').split(' ')
 
@@ -67,7 +66,6 @@ class FinatraHistogramSpec extends FinatraBaseSpec with HttpHistogram {
          |${histogramNamespace}_${histogramName}_bucket{method="get",path="/metrics",le="+Inf",} ${array(44)}
          |${histogramNamespace}_${histogramName}_count{method="get",path="/metrics",} ${array(46)}
          |${histogramNamespace}_${histogramName}_sum{method="get",path="/metrics",} ${array(48)}
-         |""".stripMargin
-    )
+         |""".stripMargin)
   }
 }

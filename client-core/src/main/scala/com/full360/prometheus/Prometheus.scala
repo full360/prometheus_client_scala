@@ -34,8 +34,7 @@ object Prometheus extends Registry {
     labels:    Map[String, String] = Map(),
     namespace: String              = "",
     timeUnit:  TimeUnit            = SECONDS,
-    buckets:   Seq[Double]         = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0)
-  )(block: => R): R = {
+    buckets:   Seq[Double]         = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0))(block: => R): R = {
 
     metric match {
       case Gauge     => prometheusGauge(name, help, namespace, labels)(block)
@@ -99,8 +98,7 @@ object Prometheus extends Registry {
     labels:    Map[String, String] = Map(),
     namespace: String              = "",
     timeUnit:  TimeUnit            = SECONDS,
-    buckets:   Seq[Double]         = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0)
-  )(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
+    buckets:   Seq[Double]         = Seq(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1.0, 2.5, 5.0, 7.5, 10.0))(block: => Future[R])(implicit ec: ExecutionContext): Future[R] = {
 
     metric match {
       case Gauge     => prometheusGaugeFuture(name, help, namespace, labels)(block)
