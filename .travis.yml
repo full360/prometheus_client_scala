@@ -28,7 +28,7 @@ after_success:
   - '[ "$TRAVIS_BRANCH" = "master" ] && [ "$BRANCH" = "master" ] && sbt ++$TRAVIS_SCALA_VERSION publishSigned && sbt ++$TRAVIS_SCALA_VERSION sonatypeRelease || true'
 
 jdk:
-   - oraclejdk8
+   - openjdk8
 
 notifications:
   email:
