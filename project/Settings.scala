@@ -1,5 +1,5 @@
 /*
- * Copyright © 2018 Full 360 Inc
+ * Copyright © 2020 Full 360 Inc
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -33,7 +33,7 @@ object Settings {
     organization := "com.full360",
     version := "0.8.4",
     scalaVersion := "2.12.8",
-    crossScalaVersions := Seq("2.11.11", "2.12.3"),
+    crossScalaVersions := Seq("2.11.11", "2.12.8"),
     scalacOptions := Seq(
       "-deprecation",
       "-encoding", "UTF-8",
