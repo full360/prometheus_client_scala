@@ -21,6 +21,7 @@
 
 import sbt._
 import sbt.Keys._
+import xerial.sbt.Sonatype.SonatypeKeys._
 import com.typesafe.sbt.SbtPgp.autoImportImpl._
 
 object Publish {
@@ -69,6 +70,8 @@ object Publish {
     publishArtifact in Compile := true,
     publishArtifact in Test := false,
     publishMavenStyle := true,
+
+    sonatypeSessionName := s"[sbt-sonatype] ${name.value}-${scalaBinaryVersion.value}-${version.value}",
 
     pomExtra := pom,
 
