@@ -24,11 +24,11 @@ import sbt._
 object Resolvers {
 
   def apply() = Seq(
-    "jcenter" at "http://jcenter.bintray.com",
-    "confluent" at "http://packages.confluent.io/maven/",
+    "jcenter" at "https://jcenter.bintray.com",
+    "confluent" at "https://packages.confluent.io/maven/",
     "sonatype-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Twitter maven" at "http://maven.twttr.com",
-    "Finatra Repo" at "http://twitter.github.com/finatra"
+    "Typesafe Repository" at "https://repo.typesafe.com/typesafe/releases/",
+    "Twitter maven" at "https://maven.twttr.com",
+    "Finatra Repo" at "https://twitter.github.com/finatra"
   )
 }
