@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.typesafe.sbt.SbtPgp.autoImportImpl._
+import com.jsuereth.sbtpgp.SbtPgp.autoImport._
 import sbt.Keys._
 import sbt.{ Credentials, _ }
 
