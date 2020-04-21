@@ -3,7 +3,7 @@ Prometheus instrumentation library for Scala applications
 
 ## License
 
-    Copyright © 2017 Full 360 Inc
+    Copyright © 2020 Full 360 Inc
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation
