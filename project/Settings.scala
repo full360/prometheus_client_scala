@@ -31,7 +31,7 @@ object Settings {
   private lazy val base = Seq(
     resolvers := Resolvers(),
     organization := "com.full360",
-    version := "0.8.6",
+    version := "0.8.7",
     scalaVersion := "2.12.8",
     crossScalaVersions := Seq("2.11.11", "2.12.8"),
     scalacOptions := Seq(
