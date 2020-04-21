@@ -11,8 +11,6 @@ cache:
     - $HOME/.ivy2
 
 script:
-  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
-  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
   - sbt ++$TRAVIS_SCALA_VERSION compile test
 
 before_cache:
@@ -24,8 +22,13 @@ before_install:
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .secring.gpg.enc -out .secring.gpg -d
   - openssl aes-256-cbc -k "$ENC_PASSWORD" -in .pubring.gpg.enc -out .pubring.gpg -d
 
-after_success:
-  - 'sbt sonatypeDropAll && sbt ++$TRAVIS_SCALA_VERSION publishSigned && sbt ++$TRAVIS_SCALA_VERSION sonatypeRelease || true'
+deploy:
+  - provider: script
+    script: sbt ++$TRAVIS_SCALA_VERSION "set every Seq(sonatypeSessionName := \"Travis Job $TRAVIS_JOB_NAME $TRAVIS_JOB_NUMBER ($TRAVIS_JOB_WEB_URL)\", publishTo := sonatypePublishToBundle.value)" publishSigned sonatypeBundleRelease
+    skip_cleanup: true
+    on:
+      all_branches: true
+#      branch: master
 
 jdk:
    - openjdk8
