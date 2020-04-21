@@ -71,8 +71,6 @@ object Publish {
     publishArtifact in Test := false,
     publishMavenStyle := true,
 
-    sonatypeSessionName := s"[sbt-sonatype] ${name.value}-${scalaBinaryVersion.value}-${version.value}",
-
     pomExtra := pom,
 
     pgpSecretRing := file(".secring.gpg"),
