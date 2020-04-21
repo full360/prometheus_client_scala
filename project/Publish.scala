@@ -19,9 +19,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import com.jsuereth.sbtpgp.SbtPgp.autoImport._
+import sbt._
 import sbt.Keys._
-import sbt.{ Credentials, _ }
+import com.typesafe.sbt.SbtPgp.autoImportImpl._
 
 object Publish {
 
@@ -72,8 +72,8 @@ object Publish {
 
     pomExtra := pom,
 
-    pgpSecretRing := file("/home/travis/build/full360/prometheus_client_scala/.secring.gpg"),
-    pgpPublicRing := file("/home/travis/build/full360/prometheus_client_scala/.pubring.gpg"),
+    pgpSecretRing := file(".secring.gpg"),
+    pgpPublicRing := file(".pubring.gpg"),
     pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
   )
 }
