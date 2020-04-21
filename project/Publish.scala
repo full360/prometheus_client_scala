@@ -72,8 +72,8 @@ object Publish {
 
     pomExtra := pom,
 
-    pgpSecretRing := file(".secring.gpg"),
-    pgpPublicRing := file(".pubring.gpg"),
+    pgpSecretRing := file("/home/travis/build/full360/prometheus_client_scala/.secring.gpg"),
+    pgpPublicRing := file("/home/travis/build/full360/prometheus_client_scala/.pubring.gpg"),
     pgpPassphrase := sys.env.get("SONATYPE_KEY_PASSPHRASE").map(_.toArray)
   )
 }
